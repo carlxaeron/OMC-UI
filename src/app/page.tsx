@@ -1,7 +1,7 @@
 // import Image from "next/image";
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { ConnectButton } from "thirdweb/react";
+import { ConnectButton, PayEmbed } from "thirdweb/react";
 import { createWallet, inAppWallet } from "thirdweb/wallets";
 import { client } from "./client";
 
@@ -140,6 +140,7 @@ export default function Home() {
           url: "http://localhost:3000",
         }}
       />
+      <PayEmbed client={client} />
     </main>
   )
 }

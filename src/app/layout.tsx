@@ -1,13 +1,8 @@
+import theme from '../theme';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-// import "./globals.css";
 import { ThemeProvider } from '@mui/material/styles';
-import theme from '../theme';
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
 import { ThirdwebProvider } from "thirdweb/react";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -24,14 +19,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+        />
+      </head>
       <body className={inter.className}>
-        <ThirdwebProvider>
-          <AppRouterCacheProvider>
+        <AppRouterCacheProvider>
+          <ThirdwebProvider>
             <ThemeProvider theme={theme}>
               {children}
             </ThemeProvider>
-          </AppRouterCacheProvider>
-        </ThirdwebProvider>
+          </ThirdwebProvider>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );
