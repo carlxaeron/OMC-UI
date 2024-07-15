@@ -5,6 +5,15 @@ import { AwaitedReactNode, JSXElementConstructor, Key, ReactElement, ReactNode, 
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 
+interface Page {
+    title: string;
+    _id: string;
+}
+
+interface PageData {
+    Page: Page;
+}
+
 export default function Menu() {
     useEffect(() => {
         const fetchData = async () => {
@@ -21,7 +30,7 @@ export default function Menu() {
         fetchData();
     }, []);
 
-    const [pages, setPages] = useState([]);
+    const [pages, setPages] = useState<PageData[]>([]);
 
     return (
         <>
