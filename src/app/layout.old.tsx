@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from '@mui/material/styles';
 import { ThirdwebProvider } from "thirdweb/react";
-import AppBar from './components/AppBar';
+// import AppBar from './components/AppBar';
 import './assets/styles.css';
 
 const inter = Inter({ subsets: ["latin"] });
@@ -29,7 +29,7 @@ export default function RootLayout({
         <body className={inter.className}>
             <AppRouterCacheProvider>
               <ThirdwebProvider>
-                  <AppBar />
+                  {/* <AppBar /> */}
                   {children}
               </ThirdwebProvider>
             </AppRouterCacheProvider>
