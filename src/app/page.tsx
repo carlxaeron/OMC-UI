@@ -1,21 +1,21 @@
-import { sanityFetch } from "@/sanity/client";
-import { SanityDocument } from "next-sanity";
+// import { sanityFetch } from "@/sanity/client";
+// import { SanityDocument } from "next-sanity";
 
-export default async function IndexPage() {
-  const PAGES_QUERY = `*[_type == 'pageType']{
-    title,
-    slug,
-    _id,
-  }`;
-  const pages = await sanityFetch<SanityDocument[]>({query: PAGES_QUERY});
-  console.log(pages);
+export default function IndexPage() {
+  // const PAGES_QUERY = `*[_type == 'pageType']{
+  //   title,
+  //   slug,
+  //   _id,
+  // }`;
+  // const pages = await sanityFetch<SanityDocument[]>({query: PAGES_QUERY});
+  // console.log(pages);
 
-  const HOME_QUERY = `*[_type == 'pageType' && title == 'Home'][0]{
-    contents[]->{
-      content[]
-    }
-  }`;
-  const home = await sanityFetch<SanityDocument[]>({query: HOME_QUERY});
+  // const HOME_QUERY = `*[_type == 'pageType' && title == 'Home'][0]{
+  //   contents[]->{
+  //     content[]
+  //   }
+  // }`;
+  // const home = await sanityFetch<SanityDocument[]>({query: HOME_QUERY});
   // console.log(home);
 
   return (
