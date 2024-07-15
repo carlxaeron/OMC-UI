@@ -14,7 +14,7 @@ interface PageData {
     Page: Page;
 }
 
-export default function Menu() {
+export default function Menu(props: any) {
     useEffect(() => {
         const fetchData = async () => {
             const PAGES_QUERY = `*[_type == 'menuType'] | order(order) {
@@ -36,12 +36,13 @@ export default function Menu() {
         <>
             { pages.map(page => ( <MenuItem
                 // onClick={() => scrollToSection('features')}
-                sx={{ py: '6px', px: '12px' }}
-                key={page.Page._id}
+                sx={props.mobile && { py: '6px', px: '12px' }}
+                key={props.mobile && page.Page._id}
             >
-                <Typography variant="body2" color="text.primary">
+                { !props.mobile && (<Typography variant="body2" color="text.primary">
                 {page.Page.title}
-                </Typography>
+                </Typography>) }
+                { props.mobile && page.Page.title }
             </MenuItem> )) }
         </>
     )

@@ -197,7 +197,7 @@ function AppAppBar({ mode, toggleColorMode }: AppAppBarProps) {
                   >
                     <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
                   </Box>
-                  <MenuItem onClick={() => scrollToSection('features')}>
+                  {/* <MenuItem onClick={() => scrollToSection('features')}>
                     Features
                   </MenuItem>
                   <MenuItem onClick={() => scrollToSection('testimonials')}>
@@ -209,8 +209,9 @@ function AppAppBar({ mode, toggleColorMode }: AppAppBarProps) {
                   <MenuItem onClick={() => scrollToSection('pricing')}>
                     Pricing
                   </MenuItem>
-                  <MenuItem onClick={() => scrollToSection('faq')}>FAQ</MenuItem>
-                  <Divider />
+                  <MenuItem onClick={() => scrollToSection('faq')}>FAQ</MenuItem> */}
+                  <Menu mobile={true} />
+                  {/* <Divider />
                   <MenuItem>
                     <Button
                       color="primary"
@@ -234,7 +235,7 @@ function AppAppBar({ mode, toggleColorMode }: AppAppBarProps) {
                     >
                       Sign in
                     </Button>
-                  </MenuItem>
+                  </MenuItem> */}
                 </Box>
               </Drawer>
             </Box>
