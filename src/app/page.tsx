@@ -1,6 +1,9 @@
 // import { sanityFetch } from "@/sanity/client";
 // import { SanityDocument } from "next-sanity";
 
+import DemoPage from "./demo/page";
+import Container from '@mui/material/Container';
+
 export default function IndexPage() {
   // const PAGES_QUERY = `*[_type == 'pageType']{
   //   title,
@@ -22,6 +25,9 @@ export default function IndexPage() {
     <main>
       {/* { pages.map(page => ( <h1 key={page._id}>{page.title}</h1> )) }
       <h1>123</h1> */}
+      <Container maxWidth="lg">
+        <DemoPage />
+      </Container>
     </main>
   )
 }
