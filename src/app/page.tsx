@@ -5,7 +5,7 @@ export default async function IndexPage() {
   const PAGES_QUERY = `*[_type == 'pageType']{
     title,
     slug,
-    _key,
+    _id,
   }`;
   const pages = await sanityFetch<SanityDocument[]>({query: PAGES_QUERY});
   console.log(pages);
@@ -16,12 +16,12 @@ export default async function IndexPage() {
     }
   }`;
   const home = await sanityFetch<SanityDocument[]>({query: HOME_QUERY});
-  console.log(home);
+  // console.log(home);
 
   return (
     <main>
-      { pages.map(page => ( <h1 key={page._key}>{page.title}</h1> )) }
-      <h1>123</h1>
+      {/* { pages.map(page => ( <h1 key={page._id}>{page.title}</h1> )) }
+      <h1>123</h1> */}
     </main>
   )
 }
