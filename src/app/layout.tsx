@@ -21,6 +21,7 @@ import Hero from './components/Hero';
 import getLPTheme from './getLPTheme';
 import { ThirdwebProvider } from 'thirdweb/react';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
+// import { BrowserRouter as Router } from 'react-router-dom';
 
 interface ToggleCustomThemeProps {
   showCustomTheme: Boolean;
@@ -93,28 +94,30 @@ export default function LandingPage({
         <AppRouterCacheProvider>
           <ThemeProvider theme={showCustomTheme ? LPtheme : defaultTheme}>
             <ThirdwebProvider>
-              <CssBaseline />
-              <AppAppBar mode={mode} toggleColorMode={toggleColorMode} />
-              <Hero />
-              {/* <Box sx={{ bgcolor: 'background.default' }}>
-                <LogoCollection />
-                <Features />
-                <Divider />
-                <Testimonials />
-                <Divider />
-                <Highlights />
-                <Divider />
-                <Pricing />
-                <Divider />
-                <FAQ />
-                <Divider />
-                <Footer />
-              </Box> */}
-              {/* <ToggleCustomTheme
-                showCustomTheme={showCustomTheme}
-                toggleCustomTheme={toggleCustomTheme}
-              /> */}
-              {children}
+              {/* <Router> */}
+                <CssBaseline />
+                <AppAppBar mode={mode} toggleColorMode={toggleColorMode} />
+                <Hero />
+                {/* <Box sx={{ bgcolor: 'background.default' }}>
+                  <LogoCollection />
+                  <Features />
+                  <Divider />
+                  <Testimonials />
+                  <Divider />
+                  <Highlights />
+                  <Divider />
+                  <Pricing />
+                  <Divider />
+                  <FAQ />
+                  <Divider />
+                  <Footer />
+                </Box> */}
+                {/* <ToggleCustomTheme
+                  showCustomTheme={showCustomTheme}
+                  toggleCustomTheme={toggleCustomTheme}
+                /> */}
+                {children}
+              {/* </Router> */}
             </ThirdwebProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>

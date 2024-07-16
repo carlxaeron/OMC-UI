@@ -4,25 +4,26 @@ import { AwaitedReactNode, JSXElementConstructor, Key, ReactElement, ReactNode, 
 // import { SanityDocument } from "next-sanity";
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
-
-interface Page {
-    title: string;
-    _id: string;
-}
+import Link from "next/link";
+// import { useNavigate } from 'react-router-dom';
 
 interface PageData {
-    Page: Page;
+    _id: any;
+    title: string;
+    link: string;
 }
 
 export default function Menu(props: any) {
+    const [pages, setPages] = useState<PageData[]>([]);
+    // const navigate = useNavigate(); // Initialize useNavigate
+
     useEffect(() => {
         const fetchData = async () => {
             const PAGES_QUERY = `*[_type == 'menuType'] | order(order) {
-                Page->{
-                  title,
-                  _id,
-                }
-            }`;
+  title,
+  "link": Page->slug.current,
+  _id,
+}`;
             //   const pages = await sanityFetch<SanityDocument[]>({query: PAGES_QUERY});
             const pages = await sanityClient.fetch(PAGES_QUERY);
             setPages(pages);
@@ -30,19 +31,19 @@ export default function Menu(props: any) {
         fetchData();
     }, []);
 
-    const [pages, setPages] = useState<PageData[]>([]);
-
     return (
         <>
             { pages.map(page => ( <MenuItem
-                // onClick={() => scrollToSection('features')}
+                // onClick={() => navigate(page.link ?? '/')}
                 sx={props.mobile && { py: '6px', px: '12px' }}
-                key={props.mobile && page.Page._id}
+                key={props.mobile && page._id}
             >
-                { !props.mobile && (<Typography variant="body2" color="text.primary">
-                {page.Page.title}
-                </Typography>) }
-                { props.mobile && page.Page.title }
+                <Link href={page.link || '/'}>
+                    { !props.mobile && (<Typography variant="body2" color="text.primary">
+                    {page.title}
+                    </Typography>) }
+                    { props.mobile && page.title }
+                </Link>
             </MenuItem> )) }
         </>
     )
