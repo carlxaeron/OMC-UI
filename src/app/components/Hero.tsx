@@ -31,7 +31,7 @@ export default function Hero() {
           pb: { xs: 8, sm: 12 },
         }}
       >
-        <Stack spacing={2} useFlexGap sx={{ width: { xs: '100%', sm: '70%' } }}>
+        {/* <Stack spacing={2} useFlexGap sx={{ width: { xs: '100%', sm: '70%' } }}>
           <Typography
             variant="h1"
             sx={{
@@ -94,7 +94,7 @@ export default function Hero() {
             </Link>
             .
           </Typography>
-        </Stack>
+        </Stack> */}
         {/* <Box
           id="image"
           sx={(theme) => ({
