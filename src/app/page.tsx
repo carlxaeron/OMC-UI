@@ -27,6 +27,7 @@ export default function IndexPage() {
       <h1>123</h1> */}
       <Container maxWidth="lg">
         <DemoPage />
+        <h1>123</h1>
       </Container>
     </main>
   )
