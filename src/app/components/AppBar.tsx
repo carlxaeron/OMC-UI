@@ -11,14 +11,14 @@ type AppBarProps = {
 
 export default function AppBar(props: AppBarProps) {
     // const [mode, setMode] = React.useState<PaletteMode>('light');
-    const { mode, setMode } = useContext(Context);
+    const ctx:any = useContext(Context);
     const toggleColorMode = () => {
-        setMode((prev: string) => (prev === 'dark' ? 'light' : 'dark'));
+        ctx.setMode((prev: string) => (prev === 'dark' ? 'light' : 'dark'));
     };
 
     return (
         <>
-            <AppAppBar menu={props.menu} mode={mode} toggleColorMode={toggleColorMode} />
+            <AppAppBar menu={props.menu} toggleColorMode={toggleColorMode} />
         </>
     )
 }

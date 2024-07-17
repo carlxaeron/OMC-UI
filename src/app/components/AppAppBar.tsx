@@ -22,7 +22,8 @@ interface AppAppBarProps {
 }
 
 function AppAppBar({ toggleColorMode, menu }: AppAppBarProps) {
-  const { mode } = React.useContext(Context);
+  const ctx:any = React.useContext(Context);
+  const mode = ctx.mode;
   const [open, setOpen] = React.useState(false);
 
   const toggleDrawer = (newOpen: boolean) => () => {

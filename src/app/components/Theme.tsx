@@ -7,11 +7,11 @@ import { PaletteMode } from '@mui/material';
 import { Context } from '../context/provider';
 
 export default function Theme(props: { children: any; }) {
-    const { mode } = useContext(Context);
-    console.log(mode);
+    const ctx:any = useContext(Context);
+    console.log(ctx.mode);
     const [showCustomTheme, setShowCustomTheme] = React.useState(true);
-    const LPtheme = createTheme(getLPTheme(mode));
-    const defaultTheme = createTheme({ palette: { mode } });
+    const LPtheme = createTheme(getLPTheme(ctx.mode));
+    const defaultTheme = createTheme({ palette: { mode: ctx.mode } });
 
     return (
         <ThemeProvider theme={showCustomTheme ? LPtheme : defaultTheme}>
