@@ -5,6 +5,7 @@ import { AwaitedReactNode, JSXElementConstructor, Key, ReactElement, ReactNode, 
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import Link from "next/link";
+import Menu2 from "./Menu2";
 // import { useNavigate } from 'react-router-dom';
 
 interface PageData {
@@ -33,10 +34,11 @@ export default function Menu(props: any) {
 
     return (
         <>
+            <Menu2 mobile={false} />
             { pages.map(page => ( <MenuItem
                 // onClick={() => navigate(page.link ?? '/')}
                 sx={props.mobile && { py: '6px', px: '12px' }}
-                key={props.mobile && page._id}
+                key={page._id}
             >
                 <Link href={page.link || '/'}>
                     { !props.mobile && (<Typography variant="body2" color="text.primary">
