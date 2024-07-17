@@ -1,40 +1,25 @@
-import { sanityClient } from "@/app/sanityClient";
-import { AwaitedReactNode, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useEffect, useState } from "react";
-// import { sanityFetch } from "@/sanity/client";
-// import { SanityDocument } from "next-sanity";
+import { sanityFetch } from '@/sanity/client';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
+import { SanityDocument } from 'next-sanity';
 import Link from "next/link";
-import Menu2 from "./Menu2";
-// import { useNavigate } from 'react-router-dom';
 
-interface PageData {
-    _id: any;
-    title: string;
-    link: string;
+type Menu2Props = {
+    mobile: boolean,
 }
 
-export default function Menu(props: any) {
-    const [pages, setPages] = useState<PageData[]>([]);
-    // const navigate = useNavigate(); // Initialize useNavigate
+const PAGES_QUERY = `*[_type == 'menuType'] | order(order) {
+    title,
+    "link": Page->slug.current,
+    _id,
+  }`;
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const PAGES_QUERY = `*[_type == 'menuType'] | order(order) {
-  title,
-  "link": Page->slug.current,
-  _id,
-}`;
-            //   const pages = await sanityFetch<SanityDocument[]>({query: PAGES_QUERY});
-            const pages = await sanityClient.fetch(PAGES_QUERY);
-            setPages(pages);
-        }
-        fetchData();
-    }, []);
+export default async function Menu2(props: Menu2Props) {
+    const pages = await sanityFetch<SanityDocument[]>({query: PAGES_QUERY});
+    console.log(pages);
 
     return (
         <>
-            <Menu2 mobile={false} />
             { pages.map(page => ( <MenuItem
                 // onClick={() => navigate(page.link ?? '/')}
                 sx={props.mobile && { py: '6px', px: '12px' }}

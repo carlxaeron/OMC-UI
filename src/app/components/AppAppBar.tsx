@@ -22,9 +22,10 @@ const logoStyle = {
 interface AppAppBarProps {
   mode: PaletteMode;
   toggleColorMode: () => void;
+  menu: any;
 }
 
-function AppAppBar({ mode, toggleColorMode }: AppAppBarProps) {
+function AppAppBar({ mode, toggleColorMode, menu }: AppAppBarProps) {
   const [open, setOpen] = React.useState(false);
 
   const toggleDrawer = (newOpen: boolean) => () => {
@@ -136,7 +137,7 @@ function AppAppBar({ mode, toggleColorMode }: AppAppBarProps) {
                     FAQ
                   </Typography>
                 </MenuItem> */}
-                <Menu />
+                { menu.desktop }
               </Box>
             </Box>
             <Box
@@ -210,7 +211,7 @@ function AppAppBar({ mode, toggleColorMode }: AppAppBarProps) {
                     Pricing
                   </MenuItem>
                   <MenuItem onClick={() => scrollToSection('faq')}>FAQ</MenuItem> */}
-                  <Menu mobile={true} />
+                  { menu.mobile }
                   {/* <Divider />
                   <MenuItem>
                     <Button
