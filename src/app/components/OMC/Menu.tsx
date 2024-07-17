@@ -1,8 +1,11 @@
-import { sanityFetch } from '@/sanity/client';
+'use client';
+// import { client, sanityFetch } from '@/sanity/client';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
-import { SanityDocument } from 'next-sanity';
+// import { SanityDocument } from 'next-sanity';
 import Link from "next/link";
+import React, { useEffect } from 'react';
+import { sanityClient } from "@/app/sanityClient";
 
 type Menu2Props = {
     mobile: boolean,
@@ -14,8 +17,25 @@ const PAGES_QUERY = `*[_type == 'menuType'] | order(order) {
     _id,
   }`;
 
-export default async function Menu2(props: Menu2Props) {
-    const pages = await sanityFetch<SanityDocument[]>({query: PAGES_QUERY});
+interface PageData {
+    _id: any;
+    title: string;
+    link: string;
+}
+
+// export default async function Menu2(props: Menu2Props) {
+export default function Menu2(props: Menu2Props) {
+    // const pages = await sanityFetch<SanityDocument[]>({query: PAGES_QUERY});
+
+    const [pages, setPages] = React.useState<PageData[]>([]);
+    useEffect(() => {
+        const fetchData = async () => {
+            await sanityClient.fetch(PAGES_QUERY).then((pages) => {
+                setPages(pages);
+            });
+        };
+        fetchData();
+    }, []);
 
     return (
         <>
