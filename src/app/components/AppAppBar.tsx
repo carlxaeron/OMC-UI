@@ -5,13 +5,10 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import Divider from '@mui/material/Divider';
-import Typography from '@mui/material/Typography';
-import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import ToggleColorMode from './ToggleColorMode';
-import Menu from './OMC/Menu';
+import { Context } from '../context/provider';
 
 const logoStyle = {
   width: '140px',
@@ -20,12 +17,12 @@ const logoStyle = {
 };
 
 interface AppAppBarProps {
-  mode: PaletteMode;
   toggleColorMode: () => void;
   menu: any;
 }
 
-function AppAppBar({ mode, toggleColorMode, menu }: AppAppBarProps) {
+function AppAppBar({ toggleColorMode, menu }: AppAppBarProps) {
+  const { mode } = React.useContext(Context);
   const [open, setOpen] = React.useState(false);
 
   const toggleDrawer = (newOpen: boolean) => () => {

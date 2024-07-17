@@ -205,7 +205,7 @@ const getDesignTokens = (mode: PaletteMode) => ({
   },
 });
 
-export default function getLPTheme(mode: PaletteMode): ThemeOptions {
+export default function getLPTheme(mode: any): ThemeOptions {
   return {
     ...getDesignTokens(mode),
     components: {

@@ -16,7 +16,6 @@ const PAGES_QUERY = `*[_type == 'menuType'] | order(order) {
 
 export default async function Menu2(props: Menu2Props) {
     const pages = await sanityFetch<SanityDocument[]>({query: PAGES_QUERY});
-    console.log(pages);
 
     return (
         <>

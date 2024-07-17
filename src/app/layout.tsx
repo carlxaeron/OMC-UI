@@ -5,6 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Hero from './components/Hero';
 import AppBar from "./components/AppBar";
 import Theme from "./components/Theme";
+import Provider from "./context/provider";
 
 export const metadata = {
   title: 'Next.js',
@@ -24,17 +25,19 @@ export default function RootLayout({
       </head>
       <body>
         <AppRouterCacheProvider>
-          <Theme>
-            <ThirdwebProvider>
-              <CssBaseline />
-              <AppBar menu={{
-                desktop: <Menu mobile={false} />,
-                mobile: <Menu mobile={true} />,
-              }} />
-              <Hero />
-              {children}
-            </ThirdwebProvider>
-          </Theme>
+          <Provider>
+            <Theme>
+              <ThirdwebProvider>
+                <CssBaseline />
+                <AppBar menu={{
+                  desktop: <Menu mobile={false} />,
+                  mobile: <Menu mobile={true} />,
+                }} />
+                <Hero />
+                {children}
+              </ThirdwebProvider>
+            </Theme>
+          </Provider>
         </AppRouterCacheProvider>
       </body>
     </html>
