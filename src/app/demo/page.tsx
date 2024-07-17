@@ -1,3 +1,4 @@
+'use client';
 import { ConnectButton, PayEmbed } from "thirdweb/react";
 // import { createWallet, inAppWallet } from "thirdweb/wallets";
 import { client } from "../client";
