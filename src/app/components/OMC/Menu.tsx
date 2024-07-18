@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 // import { SanityDocument } from 'next-sanity';
 import Link from "next/link";
 import React, { useEffect } from 'react';
-import { sanityClient } from "@/app/sanityClient";
+import { sanityClient } from "@/app/etc/sanityClient";
 
 type Menu2Props = {
     mobile: boolean,
@@ -39,18 +39,18 @@ export default function Menu2(props: Menu2Props) {
 
     return (
         <>
-            { pages.map(page => ( <MenuItem
+            {pages.map(page => (<MenuItem
                 // onClick={() => navigate(page.link ?? '/')}
                 sx={props.mobile && { py: '6px', px: '12px' }}
                 key={page._id}
             >
                 <Link href={page.link || '/'}>
-                    { !props.mobile && (<Typography variant="body2" color="text.primary">
-                    {page.title}
-                    </Typography>) }
-                    { props.mobile && page.title }
+                    {!props.mobile && (<Typography variant="body2" color="text.primary">
+                        {page.title}
+                    </Typography>)}
+                    {props.mobile && page.title}
                 </Link>
-            </MenuItem> )) }
+            </MenuItem>))}
         </>
     )
 }

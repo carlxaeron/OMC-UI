@@ -1,7 +1,8 @@
 'use client';
+
 import { ConnectButton, PayEmbed } from "thirdweb/react";
 // import { createWallet, inAppWallet } from "thirdweb/wallets";
-import { client } from "../client";
+import { thirdWebClient } from "@/app/etc/thirdWebClient";
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
@@ -20,18 +21,18 @@ export default function DemoPage() {
       </Typography>
       <Button variant="contained">Get Involved</Button>
       <Button variant="text">Learn More</Button>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
+      <br />
+      <br />
+      <br />
+      <br />
       <ConnectButton
-        client={client}
+        client={thirdWebClient}
         appMetadata={{
           name: "Example App",
           url: "http://localhost:3000",
         }}
       />
-      <PayEmbed client={client} />
+      <PayEmbed client={thirdWebClient} />
     </main>
   )
 }

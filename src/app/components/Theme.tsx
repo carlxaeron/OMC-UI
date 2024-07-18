@@ -2,9 +2,9 @@
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import React, { useContext } from 'react';
-import getLPTheme from '../getLPTheme';
-import { PaletteMode } from '@mui/material';
-import { Context } from '../context/provider';
+import getLPTheme from '@/app/etc/getLPTheme';
+// import { PaletteMode } from '@mui/material';
+import { Context } from '@/app/context/provider';
 
 export default function Theme(props: { children: any; }) {
     const ctx: any = useContext(Context);

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useContext } from "react";
-import { Context } from "../context/provider";
+import { Context } from "@/app/context/provider";
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
