@@ -5,6 +5,8 @@ import { ConnectButton, PayEmbed } from "thirdweb/react";
 import { thirdWebClient } from "@/app/etc/thirdWebClient";
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import { useContext } from "react";
+import { Context } from "../context/provider";
 
 // const wallets = [
 //   inAppWallet(),
@@ -14,7 +16,10 @@ import Typography from '@mui/material/Typography';
 // ];
 
 export default function DemoPage() {
-  return (
+  const ctx: any = useContext(Context);
+
+  if (ctx.hideProj) return <a>Test</a>;
+  else return (
     <main>
       <Typography variant="h5" gutterBottom>
         Open Missionary Community

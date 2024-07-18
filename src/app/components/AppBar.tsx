@@ -50,7 +50,8 @@ export default function AppBarComponent(props: AppBarProps) {
   //     </>
   // )
 
-  return (
+  if (ctx.hideProj) return (<a>Test</a>)
+  else return (
     <div>
       <AppBar
         position="fixed"

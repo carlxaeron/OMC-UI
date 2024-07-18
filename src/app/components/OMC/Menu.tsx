@@ -4,10 +4,11 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 // import { SanityDocument } from 'next-sanity';
 import Link from "next/link";
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { sanityClient } from "@/app/etc/sanityClient";
+import { Context } from '@/app/context/provider';
 
-type Menu2Props = {
+type MenuProps = {
     mobile: boolean,
 }
 
@@ -24,7 +25,8 @@ interface PageData {
 }
 
 // export default async function Menu2(props: Menu2Props) {
-export default function Menu2(props: Menu2Props) {
+export default function Menu(props: MenuProps) {
+    const ctx: any = useContext(Context);
     // const pages = await sanityFetch<SanityDocument[]>({query: PAGES_QUERY});
 
     const [pages, setPages] = React.useState<PageData[]>([]);
@@ -44,9 +46,9 @@ export default function Menu2(props: Menu2Props) {
                 sx={props.mobile && { py: '6px', px: '12px' }}
                 key={page._id}
             >
-                <Link href={page.link || '/'}>
+                <Link href={`${page.link || '/'}${ctx.hideProj ? `?${page.title}` : ''}`}>
                     {!props.mobile && (<Typography variant="body2" color="text.primary">
-                        {page.title}
+                        {ctx.hideProj ? 'Test' : page.title}
                     </Typography>)}
                     {props.mobile && page.title}
                 </Link>
