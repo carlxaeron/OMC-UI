@@ -7,8 +7,8 @@ import { PaletteMode } from '@mui/material';
 import { Context } from '../context/provider';
 
 export default function Theme(props: { children: any; }) {
-    const ctx:any = useContext(Context);
-    console.log(ctx.mode);
+    const ctx: any = useContext(Context);
+
     const [showCustomTheme, setShowCustomTheme] = React.useState(true);
     const LPtheme = createTheme(getLPTheme(ctx.mode));
     const defaultTheme = createTheme({ palette: { mode: ctx.mode } });
