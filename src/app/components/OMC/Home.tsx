@@ -19,8 +19,8 @@ export default function Home() {
   }, []);
 
   return (
-    <>
+    <section style={{ textAlign: 'center' }}>
       <SanityRenderer data={data} />
-    </>
+    </section>
   )
 }

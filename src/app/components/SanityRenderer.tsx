@@ -11,7 +11,7 @@ const ImgTag = (props: any) => {
     //   <img src={props.src} alt={props.alt} />
     // </Paper>
     // eslint-disable-next-line jsx-a11y/alt-text
-    <Image {...props} />
+    <Image {...props} style={{maxWidth: '100%', width: 'auto', height: 'auto'}} />
   )
 }
 
