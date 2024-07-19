@@ -7,16 +7,11 @@ import Link from "next/link";
 import React, { useContext, useEffect } from 'react';
 import { sanityClient } from "@/app/etc/sanityClient";
 import { Context } from '@/app/context/provider';
+import { mapping } from '@/app/mapping';
 
 type MenuProps = {
     mobile: boolean,
 }
-
-const PAGES_QUERY = `*[_type == 'menuType'] | order(order) {
-    title,
-    "link": Page->slug.current,
-    _id,
-  }`;
 
 interface PageData {
     _id: any;
@@ -32,7 +27,7 @@ export default function Menu(props: MenuProps) {
     const [pages, setPages] = React.useState<PageData[]>([]);
     useEffect(() => {
         const fetchData = async () => {
-            await sanityClient.fetch(PAGES_QUERY).then((pages) => {
+            await sanityClient.fetch(mapping.MENU).then((pages) => {
                 setPages(pages);
             });
         };
