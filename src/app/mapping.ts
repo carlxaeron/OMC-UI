@@ -1,6 +1,6 @@
 export const mapping = {
     "HOME":
-    `*[_type == "pageType" && title == "Home"]{
+    `*[_id == "homePage"]{
       contents[]->{
         content[]{
           ...,
@@ -15,7 +15,10 @@ export const mapping = {
               },
               title,
             },
-          }
+          },
+          _type == 'image' => {
+            asset->,
+          },
         },
       }
     }`,

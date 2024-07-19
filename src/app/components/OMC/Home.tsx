@@ -24,11 +24,3 @@ export default function Home() {
     </>
   )
 }
-
-
-// ->{
-//   'a':content[_type != 'reference']{
-//     ...,
-//   },
-//   'b':content[_type == 'reference']->,
-// },
