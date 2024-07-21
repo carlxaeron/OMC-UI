@@ -46,6 +46,6 @@ export const mapping = {
         "link": Page->slug.current,
         _id,
     }`,
-    "SLUG": (data: any) => `*[${data.slug ? `_type == 'pageType' && slug.current == '${data.slug}'` : data.where}]${defaultQuery}`,
+    "SLUG": (data: any) => `*[_type == 'pageType' && slug.current == '${data.slug}']${defaultQuery}`,
     "SECTION": (data: any) => `*[${data.where}]{sectionId, ${contentQuery}}`,
 };

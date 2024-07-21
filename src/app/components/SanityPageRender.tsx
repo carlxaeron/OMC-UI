@@ -14,13 +14,14 @@ import SanityRenderer from "../components/SanityRenderer";
 export default function SanityPageRender(props: any) {
   const [data, setData] = React.useState<any>([]);
 
-  const fetchData = async (fd: { where: any; } | undefined) => {
+  const fetchData = async (fd: { where: any; slug: any } | undefined) => {
     let f:any = false;
     const propsWhere = props?.where || fd?.where || false;
-    if(props?.params?.slug) {
-      f = mapping.SLUG(props?.params?.slug)
+    const slug = props?.params?.slug || fd?.slug || false;
+    if(slug) {
+      f = mapping.SLUG({ slug });
     } else if (propsWhere) {
-      f = mapping.SECTION(props)
+      f = mapping.SECTION({where: propsWhere});
     }
 
     await sanityClient.fetch(f).then((resp) => {
@@ -39,7 +40,8 @@ export default function SanityPageRender(props: any) {
 
   useEffect(() => {
     fetchData({
-      where: props?.params?.slug || props?.where || false
+      slug: props?.params?.slug || false,
+      where: props?.where || false
     });
   }, []);
 
