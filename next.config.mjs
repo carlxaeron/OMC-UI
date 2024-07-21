@@ -4,7 +4,7 @@ const nextConfig = {
         domains: ['cdn.sanity.io', 'via.placeholder.com'],
     },
     typescript: {
-        ignoreBuildErrors: true,
+        ignoreBuildErrors: true, // TODO: investigate the errors and remove this
     },
 };
 
