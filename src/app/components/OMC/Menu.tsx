@@ -41,12 +41,12 @@ export default function Menu(props: MenuProps) {
         <>
             {pages.map(page => (<MenuItem
                 // onClick={() => navigate(page.link ?? '/')}
-                sx={props.mobile && { py: '6px', px: '12px' }}
+                sx={props.mobile ? { py: '6px', px: '12px' } : undefined}
                 key={page._id}
             >
-                <Link href={`${page.link || '/'}${ctx.hideProj ? `?${page.title}` : ''}`}>
-                    {!props.mobile && (<Typography variant="body2" color="text.primary">
-                        {page.icon && React.createElement(icons[page.icon])}
+                <Link style={{textDecoration: 'none'}} href={`${page.link || '/'}${ctx.hideProj ? `?${page.title}` : ''}`}>
+                    {!props.mobile && (<Typography variant="body2" color="text.primary" sx={{display: 'flex', alignItems: 'center'}}>
+                        {page.icon && React.createElement(icons[page.icon], { fontSize: 'large' })}
                         {ctx.hideProj ? 'Test' : page.title}
                     </Typography>)}
                     {props.mobile && page.title}
