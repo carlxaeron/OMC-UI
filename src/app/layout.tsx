@@ -16,6 +16,8 @@ type Props = {
   searchParams: { [key: string]: string | string[] | undefined }
 }
 
+let settings: any;
+
 export async function generateMetadata(
   { params, searchParams }: Props,
   parent: ResolvingMetadata
@@ -24,6 +26,8 @@ export async function generateMetadata(
 
   const title = data.title || 'Title';
   const description = data.siteDescription || 'Description';
+
+  settings = data;
 
   return {
     title: {
@@ -39,6 +43,10 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+
+  const [data]: any = await sanityFetch({ query: mapping.SETTINGS });
+  settings = data;
+
   return (
     <html lang="en">
       <head>
@@ -54,6 +62,7 @@ export default async function RootLayout({
                 <AppBar menu={{
                   desktop: <Menu mobile={false} />,
                   mobile: <Menu mobile={true} />,
+                  settings,
                 }} />
                 <Hero />
                 <main>

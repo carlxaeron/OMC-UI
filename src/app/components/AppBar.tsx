@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Context } from "@/app/context/provider";
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -29,6 +29,10 @@ export default function AppBarComponent(props: AppBarProps) {
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
+
+  useEffect(() => {
+    console.log(props)
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
     const sectionElement = document.getElementById(sectionId);
@@ -94,13 +98,11 @@ export default function AppBarComponent(props: AppBarProps) {
                 px: 0,
               }}
             >
-              {/* <img
-                src={
-                  'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/61f12e6faf73568658154dae_SitemarkDefault.svg'
-                }
-                style={logoStyle}
-                alt="logo of sitemark"
-              /> */}
+              <img
+                src={props?.menu?.settings?.siteLogo?.url}
+                style={{marginLeft: 10}}
+                alt="Site Logo"
+              />
               <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                 {/* <MenuItem
                   onClick={() => scrollToSection('features')}
