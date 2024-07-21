@@ -44,12 +44,17 @@ export default function Menu(props: MenuProps) {
                 sx={props.mobile ? { py: '6px', px: '12px' } : undefined}
                 key={page._id}
             >
-                <Link style={{textDecoration: 'none'}} href={`${page.link || '/'}${ctx.hideProj ? `?${page.title}` : ''}`}>
+                <Link style={{textDecoration: 'none', width: '100%'}} href={`${page.link || '/'}${ctx.hideProj ? `?${page.title}` : ''}`}>
                     {!props.mobile && (<Typography variant="body2" color="text.primary" sx={{display: 'flex', alignItems: 'center'}}>
                         {page.icon && React.createElement(icons[page.icon], { fontSize: 'large' })}
                         {ctx.hideProj ? 'Test' : page.title}
                     </Typography>)}
-                    {props.mobile && page.title}
+                    {props.mobile && (
+                        <Typography sx={{display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between'}}>
+                            {page.icon && React.createElement(icons[page.icon], { fontSize: 'large' })}
+                            {page.title}
+                        </Typography>
+                    )}
                 </Link>
             </MenuItem>))}
         </>

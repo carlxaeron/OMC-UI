@@ -1,14 +1,17 @@
-import { Metadata } from "next";
+// import { Metadata } from "next";
+import React, { useEffect } from "react";
+import SanityPageRender from "../components/SanityPageRender";
 
-export const metadata: Metadata = {
-  title: "Page",
-  description: "",
-};
+// export const metadata: Metadata = {
+//   title: "Page",
+//   description: "",
+// };
 
-export default function Page() {
+export default function Page(props: any) {
+  
   return (
-    <div>
-      <h1>Page</h1>
-    </div>
+    <>
+        <SanityPageRender params={props.params} />
+    </>
   )
 }
