@@ -7,10 +7,10 @@ import Container from '@mui/material/Container';
 import { Metadata } from "next";
 import Home from '@/app/components/OMC/Home';
 
-export const metadata: Metadata = {
-  title: "Home",
-  description: "",
-};
+// export const metadata: Metadata = {
+//   title: "Home",
+//   description: "",
+// };
 
 export default function IndexPage() {
   // const PAGES_QUERY = `*[_type == 'pageType']{

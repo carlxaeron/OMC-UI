@@ -46,6 +46,11 @@ export const mapping = {
         "link": Page->slug.current,
         _id,
     }`,
+    "SETTINGS": 
+    `*[_type == 'settingsType']{
+      ...,
+      'siteLogo': siteLogo.asset{...*[^._ref == _id][0]},
+    }`,
     "SLUG": (data: any) => `*[_type == 'pageType' && slug.current == '${data.slug}']${defaultQuery}`,
     "SECTION": (data: any) => `*[${data.where}]{sectionId, ${contentQuery}}`,
 };
