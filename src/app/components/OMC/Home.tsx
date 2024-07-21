@@ -6,12 +6,17 @@ import SanityRenderer from "../SanityRenderer";
 import { mapping } from "@/app/mapping";
 
 export default function Home() {
-  const [data, setData] = React.useState<any>(null);
+  const [data, setData] = React.useState<any>([]);
 
   const fetchData = async () => {
-    const resp = await sanityClient.fetch(mapping.HOME);
-    // console.log(data);
-    setData(resp[0].contents[0].content);
+    await sanityClient.fetch(mapping.HOME).then((resp) => {
+      setData([]);
+      const arr: any[] = [];
+      resp[0].contents.forEach((c: any) => {
+        arr.push(c);
+      });
+      setData(arr);
+    });
   };
 
   useEffect(() => {
@@ -19,8 +24,13 @@ export default function Home() {
   }, []);
 
   return (
-    <section style={{ textAlign: 'center' }}>
-      <SanityRenderer data={data} />
-    </section>
+      <>
+        {data.map((newData: any) => (
+          <section id={newData.sectionId} key={newData.sectionId} style={{ textAlign: 'center' }}>
+            {/* eslint-disable-next-line react/jsx-key */}
+            <SanityRenderer data={newData.content} />
+          </section>
+        ))}
+    </>
   )
 }

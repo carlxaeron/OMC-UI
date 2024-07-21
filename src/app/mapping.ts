@@ -2,6 +2,8 @@ export const mapping = {
     "HOME":
     `*[_id == "homePage"]{
       contents[]->{
+        sectionId,
+        title,
         content[]{
           ...,
           _type == 'reference' => {
@@ -24,6 +26,7 @@ export const mapping = {
     }`,
     "MENU":
     `*[_type == 'menuType'] | order(order) {
+        icon,
         title,
         "link": Page->slug.current,
         _id,

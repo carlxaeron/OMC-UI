@@ -8,12 +8,14 @@ import React, { useContext, useEffect } from 'react';
 import { sanityClient } from "@/app/etc/sanityClient";
 import { Context } from '@/app/context/provider';
 import { mapping } from '@/app/mapping';
+import * as icons from '@sanity/icons'
 
 type MenuProps = {
     mobile: boolean,
 }
 
 interface PageData {
+    icon: React.CElement<{}, React.Component<{}, any, any>>;
     _id: any;
     title: string;
     link: string;
@@ -28,6 +30,7 @@ export default function Menu(props: MenuProps) {
     useEffect(() => {
         const fetchData = async () => {
             await sanityClient.fetch(mapping.MENU).then((pages) => {
+                console.log(pages);
                 setPages(pages);
             });
         };
@@ -43,6 +46,7 @@ export default function Menu(props: MenuProps) {
             >
                 <Link href={`${page.link || '/'}${ctx.hideProj ? `?${page.title}` : ''}`}>
                     {!props.mobile && (<Typography variant="body2" color="text.primary">
+                        {page.icon && React.createElement(icons[page.icon])}
                         {ctx.hideProj ? 'Test' : page.title}
                     </Typography>)}
                     {props.mobile && page.title}
