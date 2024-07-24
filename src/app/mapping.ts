@@ -37,20 +37,23 @@ const defaultQuery = `{
     }`;
 
 export const mapping = {
-    "HOME":
+    // SANITY QUERIES
+    HOME:
     `*[_id == "homePage"]${defaultQuery}`,
-    "MENU":
+    MENU:
     `*[_type == 'menuType'] | order(order) {
         icon,
         title,
         "link": Page->slug.current,
         _id,
     }`,
-    "SETTINGS": 
+    SETTINGS: 
     `*[_type == 'settingsType']{
       ...,
       'siteLogo': siteLogo.asset{...*[^._ref == _id][0]},
     }`,
-    "SLUG": (data: any) => `*[_type == 'pageType' && slug.current == '${data.slug}']${defaultQuery}`,
-    "SECTION": (data: any) => `*[${data.where}]{sectionId, ${contentQuery}}`,
+    SLUG: (data: any) => `*[_type == 'pageType' && slug.current == '${data.slug}']${defaultQuery}`,
+    SECTION: (data: any) => `*[${data.where}]{sectionId, ${contentQuery}}`,
+    // BLUEZONE QUERIES
+    LOGIN: {url: '/login', method: 'POST'},
 };

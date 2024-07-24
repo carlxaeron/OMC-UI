@@ -5,9 +5,11 @@ import React, { useEffect } from "react";
 import SanityRenderer from "@/app/components/SanityRenderer";
 import { mapping } from "@/app/mapping";
 import { Grid, Button } from '@mui/material';
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [data, setData] = React.useState<any>([]);
+  const router = useRouter();
 
   const fetchData = async () => {
     await sanityClient.fetch(mapping.HOME).then((resp) => {
@@ -34,7 +36,7 @@ export default function Home() {
         ))}
         <Grid container>
           <Grid item sm={6} xs={12} spacing={12} sx={{pb: 5, textAlign: {xs: 'center', sm: 'right'}, pr: {sm: 5}}}>
-            <Button color="primary" variant="contained">Get Involved</Button>
+            <Button color="primary" variant="contained" onClick={() => router.push('/auth/login')}>Get Involved</Button>
           </Grid>
           <Grid item sm={6} xs={12} sx={{pb: {sm: 5, xs: 0}, textAlign: {xs: 'center', sm: 'left'}, pl: {sm: 5}}}>
             <Button color="secondary" variant="outlined">Learn More</Button>
