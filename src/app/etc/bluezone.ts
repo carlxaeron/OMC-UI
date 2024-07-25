@@ -23,8 +23,8 @@ export const BzFetch = (link: keyof typeof mapping, data: any) => {
         };
 
         // Optionally, you can add support for body and headers if your API needs them
-        if (typeof mappingLink === 'object' && mappingLink.hasOwnProperty('body')) {
-            config.data = data.payload;
+        if (data) {
+            config.data = data;
         }
         if (mappingLink.headers) {
             config.headers = mappingLink.headers;
@@ -41,5 +41,16 @@ export const BzFetchHelper = {
     setToken: (token: string) => {
         localStorage.setItem('token', token);
     },
-
+    handleResponse: (resp: any, { success, failed, ctx }: { success: any, failed: any, ctx: any }) => {
+        if (resp.data.status === 'success') {
+            success && success(resp);
+        } else {
+            const title = resp.data.status ? resp.data.status.replace(/_/g, ' ') : 'Error';
+            ctx.setOpenModal({
+                message: resp.data.message,
+                title: title.toUpperCase(),
+            });
+            failed && failed(resp);
+        }
+    }
 }

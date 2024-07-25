@@ -2,10 +2,12 @@
 
 import { Context } from '@/app/context/provider';
 import { BzFetch, BzFetchHelper } from '@/app/etc/bluezone';
-import { Button, TextField, Grid, Paper } from '@mui/material';
+import { Button, TextField, Grid, Paper, CircularProgress } from '@mui/material';
 import React, { useContext, useState } from 'react';
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
   const ctx: any = useContext(Context);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,14 +15,24 @@ export default function LoginPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     
-    await BzFetch('LOGIN', {payload: {email, password}})
+    ctx.setOpenModal({
+      message: <><CircularProgress size={20} style={{ marginRight: '10px' }} />Please wait...</>,
+      title: 'Signing in',
+    });
+    await BzFetch('LOGIN', {email, password})
     .then((resp) => {
-      console.log(resp);
-      if(resp.data.status === 'success') {
-        BzFetchHelper.setToken(resp.data.token);
-      } else {
-        ctx.setOpenModal(resp.data.message);
-      }
+      ctx.setOpenModal(false);
+      BzFetchHelper.handleResponse(resp, { 
+        success: () => {
+          BzFetchHelper.setToken(resp.data.data.token);
+          ctx.setLoggedin(true);
+          router.push('/');
+        },
+        failed: () => {
+          // handle failed response
+        },
+        ctx 
+      });
     });
   };
 

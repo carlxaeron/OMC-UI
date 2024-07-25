@@ -14,16 +14,24 @@ export default function Theme(props: { children: any; }) {
   const defaultTheme = createTheme({ palette: { mode: ctx.mode } });
 
   const style = {
-    // position: 'absolute',
-    // top: '50%',
-    // left: '50%',
-    // transform: 'translate(-50%, -50%)',
-    // width: 400,
-    // bgcolor: 'background.paper',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    minWidth: 400,
+    bgcolor: 'background.paper',
     // border: '2px solid #000',
-    // boxShadow: 24,
-    // p: 4,
+    boxShadow: 24,
+    p: 4,
   };
+
+  const conf = () =>{
+    if(typeof ctx.openModal === 'string'){
+      return { message: ctx.openModal, title: false };
+    } else {
+      return { message: ctx.openModal.message, title: ctx.openModal.title || false };
+    }
+  }
 
   return (
     <ThemeProvider theme={showCustomTheme ? LPtheme : defaultTheme}>
@@ -35,11 +43,12 @@ export default function Theme(props: { children: any; }) {
         sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
       >
         <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Error
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            { ctx.openModal }
+          { conf().title && <Typography id="modal-modal-title" variant="h6" component="h2">
+              { conf().title }
+            </Typography>
+          }
+          <Typography id="modal-modal-description" sx={{ mt: 2, mb: 2 }}>
+            { conf().message }
           </Typography>
           <Button variant='contained' color='primary' fullWidth onClick={() => ctx.setOpenModal(false)}>OK</Button>
         </Box>

@@ -1,7 +1,6 @@
 'use client';
 // import { client, sanityFetch } from '@/sanity/client';
-import MenuItem from '@mui/material/MenuItem';
-import Typography from '@mui/material/Typography';
+import { Typography, MenuItem }  from '@mui/material';
 // import { SanityDocument } from 'next-sanity';
 import Link from "next/link";
 import React, { useContext, useEffect } from 'react';
@@ -9,6 +8,7 @@ import { sanityClient } from "@/app/etc/sanityClient";
 import { Context } from '@/app/context/provider';
 import { mapping } from '@/app/mapping';
 import * as icons from '@sanity/icons'
+import { Person } from '@mui/icons-material';
 
 type MenuProps = {
     mobile: boolean,
@@ -39,24 +39,36 @@ export default function Menu(props: MenuProps) {
 
     return (
         <>
-            {pages.map(page => (<MenuItem
-                // onClick={() => navigate(page.link ?? '/')}
-                sx={props.mobile ? { py: '6px', px: '12px' } : undefined}
-                key={page._id}
-            >
-                <Link style={{textDecoration: 'none', width: '100%'}} href={`${page.link || '/'}${ctx.hideProj ? `?${page.title}` : ''}`}>
-                    {!props.mobile && (<Typography variant="body2" color="text.primary" sx={{display: 'flex', alignItems: 'center'}}>
-                        {page.icon && React.createElement(icons[page.icon], { fontSize: 'large' })}
-                        {ctx.hideProj ? 'Test' : page.title}
-                    </Typography>)}
-                    {props.mobile && (
-                        <Typography sx={{display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between'}}>
+            {pages.map(page => (
+                <MenuItem
+                    // onClick={() => navigate(page.link ?? '/')}
+                    sx={props.mobile ? { py: '6px', px: '12px' } : undefined}
+                    key={page._id}
+                >
+                    <Link style={{textDecoration: 'none', width: '100%'}} href={`${page.link || '/'}${ctx.hideProj ? `?${page.title}` : ''}`}>
+                        {!props.mobile && (<Typography variant="body2" color="text.primary" sx={{display: 'flex', alignItems: 'center'}}>
                             {page.icon && React.createElement(icons[page.icon], { fontSize: 'large' })}
-                            {page.title}
-                        </Typography>
-                    )}
+                            {ctx.hideProj ? 'Test' : page.title}
+                        </Typography>)}
+                        {props.mobile && (
+                            <Typography sx={{display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between'}}>
+                                {page.icon && React.createElement(icons[page.icon], { fontSize: 'large' })}
+                                {page.title}
+                            </Typography>
+                        )}
+                    </Link>
+                </MenuItem>
+            ))}
+            { props.mobile && !ctx.loggedin && (<>
+                <hr />
+                <Link style={{textDecoration: 'none', width: '100%'}} href="/auth/login">
+                    <Typography sx={{display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between'}}>
+                        {React.createElement(Person, { fontSize: 'large' })} {/* Use the Person icon */}
+                        Login
+                    </Typography>
                 </Link>
-            </MenuItem>))}
+            </>
+            )}
         </>
     )
 }

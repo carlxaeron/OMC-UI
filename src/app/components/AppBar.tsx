@@ -10,6 +10,7 @@ import ToggleColorMode from './ToggleColorMode';
 import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
+import Link from "next/link";
 
 type AppBarProps = {
   menu: any;
@@ -98,11 +99,14 @@ export default function AppBarComponent(props: AppBarProps) {
                 px: 0,
               }}
             >
-              <img
-                src={props?.menu?.settings?.siteLogo?.url}
-                style={{marginLeft: 10}}
-                alt="Site Logo"
-              />
+              <Link href="/" style={{display: 'flex'}}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={props?.menu?.settings?.siteLogo?.url}
+                  style={{marginLeft: 10}}
+                  alt="Site Logo"
+                />
+              </Link>
               <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                 {/* <MenuItem
                   onClick={() => scrollToSection('features')}

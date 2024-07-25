@@ -10,6 +10,7 @@ export default function Provider(props: { children: any; }) {
     const nph = process.env.NEXT_PUBLIC_HIDE;
     const [hideProj, setHideProj] = useState((typeof nph === 'string' && nph === 'true' ? true : (nph === 'false' ? false : false)) || false);
     const [openModal, setOpenModal] = useState(false);
+    const [loggedin, setLoggedin] = useState(false);
 
     return (
         <Context.Provider value={{
@@ -19,6 +20,8 @@ export default function Provider(props: { children: any; }) {
             setHideProj,
             openModal,
             setOpenModal,
+            loggedin,
+            setLoggedin,
         }}>
             <>{props.children}</>
         </Context.Provider>
