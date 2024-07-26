@@ -1,7 +1,6 @@
 'use client';
-// import { client, sanityFetch } from '@/sanity/client';
+
 import { Typography, MenuItem }  from '@mui/material';
-// import { SanityDocument } from 'next-sanity';
 import Link from "next/link";
 import React, { useContext, useEffect } from 'react';
 import { sanityClient } from "@/app/etc/sanityClient";
@@ -21,12 +20,12 @@ interface PageData {
     link: string;
 }
 
-// export default async function Menu2(props: Menu2Props) {
 export default function Menu(props: MenuProps) {
     const ctx: any = useContext(Context);
-    // const pages = await sanityFetch<SanityDocument[]>({query: PAGES_QUERY});
 
-    const [pages, setPages] = React.useState<PageData[]>([]);
+    const [pages, setPages] = React.useState<PageData[]>(ctx?.desktopMenu || []);
+    const [pagesMobile, setPagesMobile] = React.useState<PageData[]>(ctx?.mobileMenu || []);
+
     useEffect(() => {
         const fetchData = async () => {
             await sanityClient.fetch(mapping.MENU).then((pages) => {

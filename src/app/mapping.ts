@@ -47,6 +47,13 @@ export const mapping = {
         "link": Page->slug.current,
         _id,
     }`,
+    MENU_MOBILE:
+    `*[_type == 'mobileMenuType'] | order(order) {
+        icon,
+        title,
+        "link": Page->slug.current,
+        _id,
+    }`,
     SETTINGS: 
     `*[_type == 'settingsType']{
       ...,

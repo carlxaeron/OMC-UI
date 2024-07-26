@@ -47,6 +47,9 @@ export default async function RootLayout({
   const [data]: any = await sanityFetch({ query: mapping.SETTINGS });
   settings = data;
 
+  const desktopMenu = await sanityFetch({ query: mapping.MENU });
+  const mobileMenu = await sanityFetch({ query: mapping.MENU_MOBILE });
+
   return (
     <html lang="en">
       <head>
@@ -55,7 +58,7 @@ export default async function RootLayout({
       </head>
       <body>
         <AppRouterCacheProvider>
-          <Provider>
+          <Provider data={{ desktopMenu, mobileMenu }}>
             <Theme>
               <ThirdwebProvider>
                 <CssBaseline />
