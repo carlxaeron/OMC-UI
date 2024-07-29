@@ -1,5 +1,3 @@
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
-// import { ThirdwebProvider } from 'thirdweb/react';
 import Provider from "./context/provider";
 import { Metadata, ResolvingMetadata } from "next";
 import { sanityFetch } from "@/sanity/client";
@@ -61,7 +59,6 @@ export default async function RootLayout({
         <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
       </head>
       <body>
-        <AppRouterCacheProvider>
           <Provider data={{}}>
               {/* <ThirdwebProvider> */}
                 <main className="relative flex size-full min-h-screen flex-col bg-slate-50 group/design-root overflow-x-hidden"
@@ -73,7 +70,6 @@ export default async function RootLayout({
                 </main>
               {/* </ThirdwebProvider> */}
           </Provider>
-        </AppRouterCacheProvider>
       </body>
     </html>
   )
