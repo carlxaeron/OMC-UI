@@ -1,6 +1,3 @@
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
-// import { ThirdwebProvider } from 'thirdweb/react';
-import CssBaseline from '@mui/material/CssBaseline';
 import Provider from "./context/provider";
 import { Metadata, ResolvingMetadata } from "next";
 import { sanityFetch } from "@/sanity/client";
@@ -47,16 +44,13 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" /> */}
       </head>
       <body>
-        <AppRouterCacheProvider>
           <Provider data={{}}>
               {/* <ThirdwebProvider> */}
-                <CssBaseline />
                 <main>
                     {children}
                 </main>
               {/* </ThirdwebProvider> */}
           </Provider>
-        </AppRouterCacheProvider>
       </body>
     </html>
   )
