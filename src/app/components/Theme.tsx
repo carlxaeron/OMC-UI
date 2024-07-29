@@ -5,6 +5,7 @@ import React, { useContext } from 'react';
 import getLPTheme from '@/app/etc/getLPTheme';
 import { Modal, Box, Typography, Button } from '@mui/material';
 import { Context } from '@/app/context/provider';
+import { StyledEngineProvider } from '@mui/material/styles';
 
 export default function Theme(props: { children: any; }) {
   const ctx: any = useContext(Context);
@@ -34,26 +35,28 @@ export default function Theme(props: { children: any; }) {
   }
 
   return (
-    <ThemeProvider theme={showCustomTheme ? LPtheme : defaultTheme}>
-      <Modal
-        open={ctx.openModal}
-        onClose={() => ctx.setOpenModal(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-      >
-        <Box sx={style}>
-          { conf().title && <Typography id="modal-modal-title" variant="h6" component="h2">
-              { conf().title }
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={showCustomTheme ? LPtheme : defaultTheme}>
+        <Modal
+          open={ctx.openModal}
+          onClose={() => ctx.setOpenModal(false)}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+          sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        >
+          <Box sx={style}>
+            { conf().title && <Typography id="modal-modal-title" variant="h6" component="h2">
+                { conf().title }
+              </Typography>
+            }
+            <Typography id="modal-modal-description" sx={{ mt: 2, mb: 2 }}>
+              { conf().message }
             </Typography>
-          }
-          <Typography id="modal-modal-description" sx={{ mt: 2, mb: 2 }}>
-            { conf().message }
-          </Typography>
-          <Button variant='contained' color='primary' fullWidth onClick={() => ctx.setOpenModal(false)}>OK</Button>
-        </Box>
-      </Modal>
-      {props.children}
-    </ThemeProvider>
+            <Button variant='contained' color='primary' fullWidth onClick={() => ctx.setOpenModal(false)}>OK</Button>
+          </Box>
+        </Modal>
+        {props.children}
+      </ThemeProvider>
+    </StyledEngineProvider>
   )
 }

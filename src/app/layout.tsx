@@ -10,6 +10,7 @@ import { Metadata, ResolvingMetadata } from "next";
 import Container from '@mui/material/Container';
 import { sanityFetch } from "@/sanity/client";
 import { mapping } from "./mapping";
+import '@/app/global.css';
 
 type Props = {
   params: { id: string }
@@ -48,6 +49,7 @@ export default async function RootLayout({
   settings = data;
 
   const desktopMenu = await sanityFetch({ query: mapping.MENU });
+  console.log(desktopMenu);
   const mobileMenu = await sanityFetch({ query: mapping.MENU_MOBILE });
 
   return (

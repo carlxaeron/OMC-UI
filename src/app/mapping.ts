@@ -42,6 +42,7 @@ export const mapping = {
     `*[_id == "homePage"]${defaultQuery}`,
     MENU:
     `*[_type == 'menuType'] | order(order) {
+        ...,
         icon,
         title,
         "link": Page->slug.current,

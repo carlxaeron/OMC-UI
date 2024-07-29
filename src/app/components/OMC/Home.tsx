@@ -6,6 +6,7 @@ import SanityRenderer from "@/app/components/SanityRenderer";
 import { mapping } from "@/app/mapping";
 import { Grid, Button } from '@mui/material';
 import { useRouter } from "next/navigation";
+import './Home.module.css';
 
 export default function Home() {
   const [data, setData] = React.useState<any>([]);
@@ -27,7 +28,7 @@ export default function Home() {
   }, []);
 
   return (
-      <>
+      <section id='home'>
         {data.map((newData: any) => (
           <section id={newData.sectionId} key={newData.sectionId} style={{ textAlign: 'center' }}>
             {/* eslint-disable-next-line react/jsx-key */}
@@ -35,13 +36,13 @@ export default function Home() {
           </section>
         ))}
         <Grid container>
-          <Grid item sm={6} xs={12} spacing={12} sx={{pb: 5, textAlign: {xs: 'center', sm: 'right'}, pr: {sm: 5}}}>
+          <Grid item xs={6} spacing={12} sx={{pb: 5, textAlign: {xs: 'left', sm: 'right'}, pr: {sm: 5}}}>
             <Button color="primary" variant="contained" onClick={() => router.push('/auth/login')}>Get Involved</Button>
           </Grid>
-          <Grid item sm={6} xs={12} sx={{pb: {sm: 5, xs: 0}, textAlign: {xs: 'center', sm: 'left'}, pl: {sm: 5}}}>
+          <Grid item xs={6} sx={{pb: {sm: 5, xs: 0}, textAlign: {xs: 'right', sm: 'left'}, pl: {sm: 5}}}>
             <Button color="secondary" variant="outlined">Learn More</Button>
           </Grid>
         </Grid>
-    </>
+    </section>
   )
 }

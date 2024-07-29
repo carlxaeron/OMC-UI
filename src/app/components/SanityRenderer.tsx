@@ -12,13 +12,13 @@ const ImgTag = (props: any) => {
     //   <img src={props.src} alt={props.alt} />
     // </Paper>
     // eslint-disable-next-line jsx-a11y/alt-text
-    <Image {...props} style={{maxWidth: '100%', width: 'auto', height: 'auto'}} />
+    <Image className="image_" id={props.id || false} {...props} style={{maxWidth: '100%', width: 'auto', height: 'auto'}} />
   )
 }
 
 const CardTag = (props: any) => {
   return (
-    <Card>
+    <Card className="card_" sx={{aspectRatio: props.metadata.dimensions.aspectRatio}} id={props.id || false}>
       {/* <AspectRatio ratio={props.metadata.dimensions.aspectRatio}> */}
         <CardMedia
           sx={{ height: props.height }}
@@ -68,6 +68,7 @@ export default function SanityRenderer(props: { data: any[]; }) {
     let props: any = {};
     if (helper.isMedia(content)) {
       props = { 
+        id: `media_${content._key}`,
         src: content.media.asset.image.url, 
         alt: content.title || '',
         width: content.media.asset.image.metadata.dimensions.width,
@@ -75,13 +76,15 @@ export default function SanityRenderer(props: { data: any[]; }) {
       };
     } else if (helper.isCard(content)) {
       props = {
+        id: `card_${content._key}`,
         src: content.image.url,
         alt: content.description || '',
         height: content.image.metadata.dimensions.height,
         metadata: content.image.metadata,
       }
     } else if (helper.isImage(content)) {
-      props = { 
+      props = {
+        id: `image_${content._key}`,
         src: content.asset.url, 
         alt: content.title || '',
         width: content.asset.metadata.dimensions.width,
