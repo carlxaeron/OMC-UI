@@ -4,6 +4,7 @@ import { sanityFetch } from "@/sanity/client";
 import { mapping } from "./mapping";
 import '@/app/global.css';
 import Header from './components/Header';
+import Head from "./components/Head";
 
 type Props = {
   params: { id: string }
@@ -11,6 +12,7 @@ type Props = {
 }
 
 let settings: any;
+let resp: any;
 
 export async function generateMetadata(
   { params, searchParams }: Props,
@@ -19,18 +21,20 @@ export async function generateMetadata(
   // const [data]: any = await sanityFetch({ query: mapping.SETTINGS });
   const data:any = {};
 
-  const title = data.title || 'Title';
-  const description = data.siteDescription || 'Description';
+  const title = data.title || process.env.TITLE || 'Title';
+  const description = data.siteDescription || process.env.TITLE || 'Description';
 
   settings = data;
 
-  return {
+  resp = {
     title: {
       template: `%s | ${title}`,
       default: title,
     },
     description,
   };
+
+  return resp;
 }
 
 export default async function RootLayout({
@@ -40,24 +44,7 @@ export default async function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        {/* <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" /> */}
-        <link rel="preconnect" href="https://fonts.gstatic.com/" crossOrigin="" />
-        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-        <link
-          rel="stylesheet"
-          as="style"
-          // onLoad="this.rel='stylesheet'"
-          href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Public+Sans%3Awght%40400%3B500%3B700%3B900"
-        />
-
-        <title>Galileo Design</title>
-        <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
-
-        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-      </head>
+      <Head />
       <body>
           <Provider data={{}}>
               {/* <ThirdwebProvider> */}
@@ -65,7 +52,11 @@ export default async function RootLayout({
                 style={{ fontFamily: "Public Sans, Noto Sans, sans-serif" }}>
                   <div className="layout-container flex h-full grow flex-col">
                     <Header />
-                    {children}
+                    <div className="px-40 flex flex-1 justify-center py-5">
+                      <div className="layout-content-container flex flex-col max-w-[960px] flex-1">
+                        {children}
+                      </div>
+                    </div>
                   </div>
                 </main>
               {/* </ThirdwebProvider> */}

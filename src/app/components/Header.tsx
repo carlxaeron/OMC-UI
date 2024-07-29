@@ -1,4 +1,15 @@
+'use client';
+
+import React, { useContext } from "react";
+import { Context } from "../context/provider";
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+
 export default function Header() {
+  const ctx:any = useContext(Context);
+  const pathName = usePathname();
+  const router = useRouter();
+
   return (
     <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7edf3] px-10 py-3">
       <div className="flex items-center gap-4 text-[#0e141b]">
@@ -24,53 +35,25 @@ export default function Header() {
           </svg>
         </div>
         <h2 className="text-[#0e141b] text-lg font-bold leading-tight tracking-[-0.015em]">
-          Katherine
+          {ctx.settings.title}
         </h2>
       </div>
       <div className="flex flex-1 justify-end gap-8">
         <div className="flex items-center gap-9">
-          <a
-            className="text-[#0e141b] text-sm font-medium leading-normal"
-            href="#"
-          >
-            Home
-          </a>
-          <a
-            className="text-[#0e141b] text-sm font-medium leading-normal"
-            href="#"
-          >
-            About
-          </a>
-          <a
-            className="text-[#0e141b] text-sm font-medium leading-normal"
-            href="#"
-          >
-            Services
-          </a>
-          <a
-            className="text-[#0e141b] text-sm font-medium leading-normal"
-            href="#"
-          >
-            Projects
-          </a>
-          <a
-            className="text-[#0e141b] text-sm font-medium leading-normal"
-            href="#"
-          >
-            Ministry
-          </a>
-          <a
-            className="text-[#0e141b] text-sm font-medium leading-normal"
-            href="#"
-          >
-            Blog
-          </a>
+          <Link href="/" className={`${pathName === '/' && 'underline'} text-[#0e141b] text-sm font-medium leading-normal`}>Home</Link>
+          <Link href="/about" className={`${pathName === '/about' && 'underline'} text-[#0e141b] text-sm font-medium leading-normal`}>About</Link>
+          <Link href="/services" className={`${pathName === '/services' && 'underline'} text-[#0e141b] text-sm font-medium leading-normal`}>Services</Link>
+          <Link href="/projects" className={`${pathName === '/projects' && 'underline'} text-[#0e141b] text-sm font-medium leading-normal`}>Projects</Link>
+          <Link href="/ministry" className={`${pathName === '/ministry' && 'underline'} text-[#0e141b] text-sm font-medium leading-normal`}>Ministry</Link>
+          <Link href="/blog" className={`${pathName === '/blog' && 'underline'} text-[#0e141b] text-sm font-medium leading-normal`}>Blog</Link>
         </div>
         <div className="flex gap-2">
           <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-[#1466b8] text-slate-50 text-sm font-bold leading-normal tracking-[0.015em]">
             <span className="truncate">Donate</span>
           </button>
-          <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-[#e7edf3] text-[#0e141b] text-sm font-bold leading-normal tracking-[0.015em]">
+          <button
+            onClick={() => router.push('/signup/account')}
+            className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-[#e7edf3] text-[#0e141b] text-sm font-bold leading-normal tracking-[0.015em]">
             <span className="truncate">Join</span>
           </button>
           <button className="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 bg-[#e7edf3] text-[#0e141b] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
