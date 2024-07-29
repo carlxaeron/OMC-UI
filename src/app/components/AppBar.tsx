@@ -31,10 +31,6 @@ export default function AppBarComponent(props: AppBarProps) {
     setOpen(newOpen);
   };
 
-  useEffect(() => {
-    console.log(props)
-  }, []);
-
   const scrollToSection = (sectionId: string) => {
     const sectionElement = document.getElementById(sectionId);
     const offset = 128;
