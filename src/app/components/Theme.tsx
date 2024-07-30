@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import { useState } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 export default function Theme(props:any) {
   const router = useRouter();
@@ -17,14 +20,20 @@ export default function Theme(props:any) {
 
   const getLinks = () => {
     return links.map((link) => {
-      return <Link key={link.title} className={`${pathname === link.path && 'underline '}text-[#111418] text-sm font-medium leading-normal`} href={link.path}>{link.title}</Link>
+      return <Link key={link.title} className={`${pathname === link.path ? 'underline ' : ''}text-[#111418] text-sm font-medium leading-normal`} href={link.path}>{link.title}</Link>
     });
   }
 
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+
+  const toggleMobileNav = () => {
+    setIsMobileNavOpen(!isMobileNavOpen);
+  };
+
   return (
     <div className="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden" style={{ fontFamily: 'Epilogue, "Noto Sans", sans-serif' }}>
-      <div className="layout-container flex h-full grow flex-col">
-        <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f4] px-10 py-3">
+      <div className="layout-container flex h-full grow flex-col md:pt-0 pt-[45px]">
+        <header className="fixed left-0 top-0 w-full bg-white z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f4] md:px-10 px-4 py-3">
           <div onClick={() => router.push('/')} className="cursor-pointer flex items-center gap-4 text-[#111418]">
             <div className="size-4">
               <svg  viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -44,11 +53,11 @@ export default function Theme(props:any) {
             <h2 className="text-[#111418] text-lg font-bold leading-tight tracking-[-0.015em]">Dr. Krizz Chan</h2>
           </div>
           <div className="flex flex-1 justify-end gap-8">
-            <div className="flex items-center gap-9">
+            <div className="md:flex items-center gap-9 hidden">
               {getLinks()}
             </div>
             <button
-              className="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 bg-[#f0f2f4] text-[#111418] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5"
+              className="md:flex hidden max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 bg-[#f0f2f4] text-[#111418] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5"
             >
               <div className="text-[#111418]" data-icon="ShoppingBag" data-size="20px" data-weight="regular">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
@@ -58,9 +67,20 @@ export default function Theme(props:any) {
                 </svg>
               </div>
             </button>
+            <button
+              className="md:hidden flex items-center justify-center w-10 h-10 bg-[#f0f2f4] text-[#111418] rounded-md"
+              onClick={toggleMobileNav}
+            >
+              <FontAwesomeIcon icon={isMobileNavOpen ? faTimes : faBars} width="20" height="20" />
+            </button>
           </div>
+          {isMobileNavOpen && (
+            <div className="top-[100%] w-full z-50 bg-white absolute left-0 md:hidden flex flex-col gap-4 py-2 items-end pr-4">
+              {getLinks()}
+            </div>
+          )}
         </header>
-        <div className="@[960px]:px-40 flex flex-1 justify-center py-5">
+        <div className="md:px-40 px-0 flex flex-1 justify-center py-5">
           <div className="layout-content-container flex flex-col max-w-[960px] flex-1">
             {props.children}
           </div>
