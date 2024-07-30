@@ -5,9 +5,13 @@ import { AnimatePresence, motion } from 'framer-motion';
 export default function Animate({ children }: { children: React.ReactNode }) {
     return (
         <>
-            {/* <AnimatePresence mode="wait" initial={false}> */}
+            <AnimatePresence 
+                mode="popLayout" 
+                initial={true}
+                onExitComplete={() => window.scrollTo(0, 0)}
+            >
                 {children}
-            {/* </AnimatePresence> */}
+            </AnimatePresence>
         </>
     )
 }
@@ -15,9 +19,9 @@ export default function Animate({ children }: { children: React.ReactNode }) {
 export function Animate1({ children }: { children: React.ReactNode }) {
     return (
         <motion.div
-            initial={{ y: -100, opacity: 0 }}
+            initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -100, opacity: 0 }}
+            exit={{ y: -50, opacity: 0 }}
             transition={{
                 type: "spring",
                 stiffness: 260,
