@@ -20,7 +20,7 @@ export default function Theme(props:any) {
 
   const getLinks = () => {
     return links.map((link) => {
-      return <Link key={link.title} className={`${pathname === link.path ? 'underline ' : ''}text-[#111418] text-sm font-medium leading-normal`} href={link.path}>{link.title}</Link>
+      return <Link onClick={() => setIsMobileNavOpen(false)} key={link.title} className={`${pathname === link.path ? 'underline ' : ''}text-[#111418] text-sm font-medium leading-normal`} href={link.path}>{link.title}</Link>
     });
   }
 
