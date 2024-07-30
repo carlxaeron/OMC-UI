@@ -3,6 +3,8 @@
 // // import { SanityDocument } from "next-sanity";
 // import Button from '@mui/material/Button'; // Import the Button component from the appropriate library
 
+import { Animate1 } from "./components/Animate";
+
 // import DemoPage from "./demo/page";
 // import Container from '@mui/material/Container';
 // import { Metadata } from "next";
@@ -14,7 +16,7 @@
 
 export default function IndexPage() {
   return (
-    <>
+    <Animate1>
       <div className="@container">
         <div className="flex flex-col gap-6 px-4 py-10 @[480px]:gap-8 @[864px]:flex-row">
           <div
@@ -145,6 +147,6 @@ export default function IndexPage() {
           </div>
         </div>
       </div>
-    </>
+    </Animate1>
   );
 }

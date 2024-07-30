@@ -1,7 +1,9 @@
+import { Animate1 } from "@/app/components/Animate";
+
 /* eslint-disable react/no-unescaped-entities */
 export default function AboutPage() {
   return (
-    <>
+    <Animate1>
       <div className="flex p-4 @container">
         <div className="flex w-full flex-col gap-4 items-center">
           <div className="flex gap-4 flex-col items-center">
@@ -68,6 +70,6 @@ export default function AboutPage() {
           </div>
         </div>
       </div>
-    </>
+    </Animate1>
   );
 }

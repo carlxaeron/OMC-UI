@@ -1,6 +1,8 @@
+import { Animate1 } from "@/app/components/Animate";
+
 export default function ProjectsPage() {
   return (
-    <>
+    <Animate1>
       <div className="flex p-4 @container">
         <div className="flex w-full flex-col gap-4 @[520px]:flex-row @[520px]:justify-between @[520px]:items-center">
           <div className="flex gap-4">
@@ -107,6 +109,6 @@ export default function ProjectsPage() {
           </div>
         </a>
       </div>
-    </>
+    </Animate1>
   );
 }

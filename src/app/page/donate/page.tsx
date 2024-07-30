@@ -1,6 +1,8 @@
+import { Animate1 } from "@/app/components/Animate";
+
 export default function DonatePage() {
   return (
-    <>
+    <Animate1>
       <div className="@container">
         <div className="@[480px]:p-4">
           <div
@@ -104,6 +106,6 @@ export default function DonatePage() {
           </button>
         </div>
       </div>
-    </>
+    </Animate1>
   );
 }

@@ -1,7 +1,9 @@
+import { Animate1 } from "@/app/components/Animate";
+
 /* eslint-disable react/no-unescaped-entities */
 export default function ContactPage() {
 	return (
-		<>
+		<Animate1>
 			<div className="flex flex-wrap justify-between gap-3 p-4">
 				<div className="flex min-w-72 flex-col gap-3">
 					<p className="text-[#111418] text-4xl font-black leading-tight tracking-[-0.033em]">Get in touch</p>
@@ -85,6 +87,6 @@ export default function ContactPage() {
 					<p className="text-[#637588] text-sm font-normal leading-normal line-clamp-2">415-555-5555</p>
 				</div>
 			</div>
-		</>
+		</Animate1>
 	)
 }

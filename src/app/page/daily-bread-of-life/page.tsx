@@ -1,7 +1,9 @@
+import { Animate1 } from "@/app/components/Animate";
+
 /* eslint-disable react/no-unescaped-entities */
 export default function DailyBreadOfLifePage() {
   return (
-    <>
+    <Animate1>
       <div className="@container">
         <div className="@[480px]:p-4">
           <div
@@ -119,6 +121,6 @@ export default function DailyBreadOfLifePage() {
           </p>
         </div>
       </div>
-    </>
+    </Animate1>
   );
 }
