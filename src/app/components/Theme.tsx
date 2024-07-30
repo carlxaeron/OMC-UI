@@ -1,11 +1,33 @@
+'use client';
+
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
+
 export default function Theme(props:any) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const links = [
+    {title: 'About', path: '/page/about'},
+    {title: 'Services', path: '/page/services'},
+    {title: 'Projects', path: '/page/projects'},
+    {title: 'Podcast', path: '/page/podcast'},
+    {title: 'Blog', path: '/page/blog'},
+  ];
+
+  const getLinks = () => {
+    return links.map((link) => {
+      return <Link key={link.title} className={`${pathname === link.path && 'underline '}text-[#111418] text-sm font-medium leading-normal`} href={link.path}>{link.title}</Link>
+    });
+  }
+
   return (
     <div className="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden" style={{ fontFamily: 'Epilogue, "Noto Sans", sans-serif' }}>
       <div className="layout-container flex h-full grow flex-col">
         <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f4] px-10 py-3">
-          <div className="flex items-center gap-4 text-[#111418]">
+          <div onClick={() => router.push('/')} className="cursor-pointer flex items-center gap-4 text-[#111418]">
             <div className="size-4">
-              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg  viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_6_330)">
                   <path
                     fill-rule="evenodd"
@@ -23,11 +45,7 @@ export default function Theme(props:any) {
           </div>
           <div className="flex flex-1 justify-end gap-8">
             <div className="flex items-center gap-9">
-              <a className="text-[#111418] text-sm font-medium leading-normal" href="#">About</a>
-              <a className="text-[#111418] text-sm font-medium leading-normal" href="#">Services</a>
-              <a className="text-[#111418] text-sm font-medium leading-normal" href="#">Projects</a>
-              <a className="text-[#111418] text-sm font-medium leading-normal" href="#">Podcast</a>
-              <a className="text-[#111418] text-sm font-medium leading-normal" href="#">Blog</a>
+              {getLinks()}
             </div>
             <button
               className="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 bg-[#f0f2f4] text-[#111418] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5"
