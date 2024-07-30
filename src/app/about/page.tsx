@@ -1,5 +1,12 @@
+'use client';
+
+import { useContext } from "react";
+import { Context } from "../context/provider";
+
 /* eslint-disable react/no-unescaped-entities */
 export default function About() {
+  const ctx:any = useContext(Context);
+
   return (
     <>
       <div className="flex p-4 @container">
@@ -14,7 +21,7 @@ export default function About() {
             ></div>
             <div className="flex flex-col items-center justify-center justify-center">
               <p className="text-[#0e141b] text-[22px] font-bold leading-tight tracking-[-0.015em] text-center">
-                Jen Smith
+                {ctx.settings?.title}
               </p>
               <p className="text-[#4e7397] text-base font-normal leading-normal text-center">
                 Product Designer
