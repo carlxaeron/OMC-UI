@@ -3,6 +3,7 @@ import { Metadata, ResolvingMetadata } from "next";
 import { sanityFetch } from "@/sanity/client";
 import { mapping } from "./mapping";
 import '@/app/global.css';
+import AnimatePresence from "./components/Animate";
 
 type Props = {
   params: { id: string }
@@ -44,13 +45,15 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" /> */}
       </head>
       <body>
+        <AnimatePresence>
           <Provider data={{}}>
-              {/* <ThirdwebProvider> */}
-                <main>
-                    {children}
-                </main>
-              {/* </ThirdwebProvider> */}
+            {/* <ThirdwebProvider> */}
+            <main>
+              {children}
+            </main>
+            {/* </ThirdwebProvider> */}
           </Provider>
+        </AnimatePresence>
       </body>
     </html>
   )
