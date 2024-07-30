@@ -80,7 +80,7 @@ export default function SignupAccountPage() {
       <p className="text-[#4e7397] text-sm font-normal leading-normal pb-3 pt-1 px-4">By continuing, you agree to Crowdfund's Terms of Use and Privacy Policy</p>
       <div className="flex justify-stretch">
         <div className="flex flex-1 gap-3 flex-wrap px-4 py-3 justify-end">
-          {cancelBtn}
+          {cancelBtn()}
           <button
             onClick={nextStep}
             disabled={isDisabled()}
