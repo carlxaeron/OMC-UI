@@ -9,13 +9,19 @@ import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 export default function Theme(props:any) {
   const router = useRouter();
   const pathname = usePathname();
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const toggleMobileNav = () => {
+    setIsMobileNavOpen(!isMobileNavOpen);
+  };
 
   const links = [
     {title: 'About', path: '/page/about'},
     {title: 'Services', path: '/page/services'},
     {title: 'Projects', path: '/page/projects'},
-    {title: 'Podcast', path: '/page/podcast'},
-    {title: 'Blog', path: '/page/blog'},
+    {title: 'Contact', path: '/page/contact'},
+    {title: 'Daily Bread of Life', path: '/page/daily-bread-of-life'},
+    // {title: 'Podcast', path: '/page/podcast'},
+    // {title: 'Blog', path: '/page/blog'},
   ];
 
   const getLinks = () => {
@@ -24,17 +30,24 @@ export default function Theme(props:any) {
     });
   }
 
-  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
-
-  const toggleMobileNav = () => {
-    setIsMobileNavOpen(!isMobileNavOpen);
-  };
-
+  const buttons = (conf:any) => <div style={conf.desktop ? {justifyContent: 'space-between'} : {}} className={`${conf.desktop ? 'md:flex hidden' : 'flex w-full pl-2 justify-end'} gap-2`}>
+    <button
+      onClick={() => router.push('/page/donate')}
+      className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-[#1980e6] text-white text-sm font-bold leading-normal tracking-[0.015em]"
+    >
+      <span className="truncate">Donate</span>
+    </button>
+    <button
+      className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-[#f0f2f4] text-[#111418] text-sm font-bold leading-normal tracking-[0.015em]"
+    >
+      <span className="truncate">Join</span>
+    </button>
+  </div>
   return (
     <div className="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden" style={{ fontFamily: 'Epilogue, "Noto Sans", sans-serif' }}>
       <div className="layout-container flex h-full grow flex-col md:pt-[65px] pt-[45px]">
         <header className="fixed left-0 top-0 w-full bg-white z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f4] md:px-10 px-4 py-3">
-          <div onClick={() => router.push('/')} className="cursor-pointer flex items-center gap-4 text-[#111418]">
+          <div onClick={() => {router.push('/');  setIsMobileNavOpen(false);}} className="cursor-pointer flex items-center gap-4 text-[#111418]">
             <div className="size-4">
               <svg  viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_6_330)">
@@ -56,6 +69,7 @@ export default function Theme(props:any) {
             <div className="md:flex items-center gap-9 hidden">
               {getLinks()}
             </div>
+            {buttons({desktop: true})}
             <button
               className="md:flex hidden max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 bg-[#f0f2f4] text-[#111418] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5"
             >
@@ -77,6 +91,7 @@ export default function Theme(props:any) {
           {isMobileNavOpen && (
             <div className="top-[100%] w-full z-50 bg-white absolute left-0 md:hidden flex flex-col gap-4 py-2 items-end pr-4">
               {getLinks()}
+              {buttons({desktop: false})}
             </div>
           )}
         </header>
