@@ -32,7 +32,7 @@ export default function Theme(props:any) {
 
   return (
     <div className="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden" style={{ fontFamily: 'Epilogue, "Noto Sans", sans-serif' }}>
-      <div className="layout-container flex h-full grow flex-col md:pt-0 pt-[45px]">
+      <div className="layout-container flex h-full grow flex-col md:pt-[65px] pt-[45px]">
         <header className="fixed left-0 top-0 w-full bg-white z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f4] md:px-10 px-4 py-3">
           <div onClick={() => router.push('/')} className="cursor-pointer flex items-center gap-4 text-[#111418]">
             <div className="size-4">
