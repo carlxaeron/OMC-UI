@@ -20,8 +20,8 @@ export async function generateMetadata(
   // const [data]: any = await sanityFetch({ query: mapping.SETTINGS });
   const data:any = {};
 
-  const title = data.title || 'Title';
-  const description = data.siteDescription || 'Description';
+  const title = data.title || process.env.NEXT_PUBLIC_TITLE || 'Title';
+  const description = data.siteDescription || process.env.NEXT_PUBLIC_TITLE || 'Description';
 
   settings = data;
 
