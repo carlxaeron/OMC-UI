@@ -15,13 +15,13 @@ export default function Theme(props:any) {
   };
 
   const links = [
-    {title: 'About', path: '/page/about'},
-    {title: 'Services', path: '/page/services'},
-    {title: 'Projects', path: '/page/projects'},
-    {title: 'Contact', path: '/page/contact'},
-    {title: 'Daily Bread of Life', path: '/page/daily-bread-of-life'},
-    // {title: 'Podcast', path: '/page/podcast'},
-    // {title: 'Blog', path: '/page/blog'},
+    {title: 'About', path: '/about'},
+    {title: 'Services', path: '/services'},
+    {title: 'Projects', path: '/projects'},
+    {title: 'Contact', path: '/contact'},
+    {title: 'Daily Bread of Life', path: '/daily-bread-of-life'},
+    // {title: 'Podcast', path: '/podcast'},
+    // {title: 'Blog', path: '/blog'},
   ];
 
   const getLinks = () => {
@@ -32,7 +32,7 @@ export default function Theme(props:any) {
 
   const buttons = (conf:any) => <div style={conf.desktop ? {justifyContent: 'space-between'} : {}} className={`${conf.desktop ? 'md:flex hidden' : 'flex w-full pl-2 justify-end'} gap-2`}>
     <button
-      onClick={() => router.push('/page/donate')}
+      onClick={() => router.push('/donate')}
       className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-[#1980e6] text-white text-sm font-bold leading-normal tracking-[0.015em]"
     >
       <span className="truncate">Donate</span>
