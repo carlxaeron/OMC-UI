@@ -40,11 +40,11 @@ async function scrapeData() {
         value: cookie.value,
         domain: cookie.domain,
         path: cookie.path,
-        // expires: cookie.expires,
-        // size: cookie.size,
-        // httpOnly: !!cookie.httpOnly,
-        // secure: !!cookie.secure,
-        // session: !!cookie.session,
+        expires: cookie.expires,
+        size: cookie.size,
+        httpOnly: !!cookie.httpOnly,
+        secure: !!cookie.secure,
+        session: !!cookie.session,
         // sameSite: cookie.sameSite
       })));
     }
@@ -66,16 +66,6 @@ async function scrapeData() {
       });
 
       await page.locator('.btn-begin').click(); 
-      
-      // Save cookies to the database
-      const newCookies = await page.cookies();
-      db.serialize(() => {
-        db.run("DELETE FROM cookies");
-        newCookies.forEach((cookie: any) => {
-          db.run("INSERT INTO cookies (name, value, domain, path, expires, size, httpOnly, secure, session, sameSite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
-            cookie.name, cookie.value, cookie.domain, cookie.path, cookie.expires, cookie.size, cookie.httpOnly ? 1 : 0, cookie.secure ? 1 : 0, cookie.session ? 1 : 0, cookie.sameSite);
-        });
-      });
     } else {
       await page.goto(exploreUrl);
     }
@@ -83,6 +73,8 @@ async function scrapeData() {
     const gscnSelector = await page.locator('._2w-kjWxO').waitHandle();
     const gscnData = await gscnSelector?.evaluate((el: Element) => {
       return Array.from(el.querySelectorAll('[xqa*=domain]')).map((div: any, i: number) => {
+        div.scrollIntoView({ behavior: 'smooth' });
+        div.click();
         return { title: div.innerText, id: i };
       });
     });
@@ -118,6 +110,18 @@ async function scrapeData() {
         });
       }
     });
+
+    if(!isLoggedIn) {
+      // Save cookies to the database
+      const newCookies = await page.cookies();
+      db.serialize(() => {
+        db.run("DELETE FROM cookies");
+        newCookies.forEach((cookie: any) => {
+          db.run("INSERT INTO cookies (name, value, domain, path, expires, size, httpOnly, secure, session, sameSite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+            cookie.name, cookie.value, cookie.domain, cookie.path, cookie.expires, cookie.size, cookie.httpOnly ? 1 : 0, cookie.secure ? 1 : 0, cookie.session ? 1 : 0, cookie.sameSite);
+        });
+      });
+    }
 
     return { categories: gscnData, data };
   } catch (error:any) {
