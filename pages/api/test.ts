@@ -7,6 +7,23 @@ type ResponseData = {
   data: any
 }
 
+async function scrapeQuiz(page:any) {
+  const questionSelector = await page.locator('[xqa*="MCQuestion"]').waitHandle();
+  const d = await questionSelector?.evaluate((el: Element) => {
+    let answers:any = [];
+    el.querySelectorAll('fieldset label').forEach((label: Element) => {
+      const text = label?.textContent?.replaceAll('CorrectCorrect', '').replaceAll('IncorrectIncorrect', '') || '';
+      answers.push({ text, isCorrect: label?.textContent?.includes('Correct') });
+    });
+    return {
+      rationale: el.querySelector('div:nth-child(1) > h2 + div')?.textContent,
+      question: el.querySelector('._2sv26PNy > div > p')?.textContent,
+      answers,
+    }
+  });
+  return d;
+}
+
 async function scrapeData(props:{ 
   categoryId: number | number[] | undefined,
   quizId: number | number[] | undefined,
@@ -15,8 +32,8 @@ async function scrapeData(props:{
     const loginUrl = 'https://apics.partnerrc.com/am/@@login'; // Login URL
     const exploreUrl = 'https://apics.partnerrc.com/cscp2023/explore'; // Replace with the URL to scrape
 
-    const browser = await puppeteer.launch({ headless: false, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-    // const browser = await puppeteer.launch();
+    // const browser = await puppeteer.launch({ headless: false, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
     await page.setJavaScriptEnabled(true);
@@ -102,7 +119,6 @@ async function scrapeData(props:{
         });
       });
       const selectedQuiz = quizzesData.filter((quiz: any, quizI) => quizI === props.quizId)[0];
-      console.log(selectedQuiz);
 
       if(props.quizId !== 1) {
         const quizS = await page.locator(`${quizzesSeletor} article:nth-child(${props.quizId})`).waitHandle()
@@ -157,29 +173,33 @@ async function scrapeData(props:{
         } catch (error) {
           console.log('Page locator not found:', error);
         }
-        const questionsData = [];
-        const maxQuestions = 5;
-        let questionPageCnt = 0;
-        while(isBtnDisabled === false && questionPageCnt <= maxQuestions) {
-          const questionSelector = await page.locator('[xqa*="MCQuestion"]').waitHandle();
-          const d = await questionSelector?.evaluate((el: Element) => {
-            let answers:any = [];
-            el.querySelectorAll('fieldset label').forEach((label: Element) => {
-              const text = label?.textContent?.replaceAll('CorrectCorrect', '').replaceAll('IncorrectIncorrect', '') || '';
-              answers.push({ text, isCorrect: label?.textContent?.includes('Correct') });
-            });
-
-            return {
-              rationale: el.querySelector('div:nth-child(1) > h2 + div')?.textContent,
-              question: el.querySelector('._2sv26PNy > div > p')?.textContent,
-              answers,
-            }
-          });
-          questionsData.push(d);
-          await page.locator(nextBtn).click();
-          questionPageCnt++;
+        const questionsData:any = [];
+        while(isBtnDisabled === false) {
+          try {
+            questionsData.push(await scrapeQuiz(page));
+            await page.locator(nextBtn).click();
+          } catch (error) {
+            questionsData.push(await scrapeQuiz(page));
+            isBtnDisabled = true;
+          }
         }
         data = questionsData;
+        
+        db.serialize(() => {
+          questionsData.forEach((question: any) => {
+            db.run("INSERT INTO questions (question, rationale, quiz_id) VALUES (?, ?, ?)", question.question, question.rationale, selectedQuiz.id);
+            db.get("SELECT last_insert_rowid() as id", (err, row:any) => {
+              if (err) {
+                throw new Error(`Failed to get last inserted row id: ${err.message}`);
+              }
+              if(row.id) {
+                question.answers.forEach((answer: any) => {
+                  db.run("INSERT INTO answers (answer, is_correct, question_id) VALUES (?, ?, ?)", answer.text, answer.isCorrect ? 1 : 0, row.id);
+                });
+              }
+            });
+          });
+        });
       }
       if(quizPageType.hasRestart) {
         await page.locator('[xqa="action restart"]').click();
@@ -239,6 +259,8 @@ async function scrapeData(props:{
         });
       });
     }
+
+    page.close();
 
     return { categories: gscnData, data };
   } catch (error:any) {
