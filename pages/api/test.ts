@@ -1,23 +1,22 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import axios from 'axios';
 import puppeteer from 'puppeteer';
-import fs from 'fs/promises';
-const path = require('path');
 import db from './../../database';
-
-const COOKIES_PATH = path.resolve(__dirname, 'cookies.txt');
  
 type ResponseData = {
   message: string,
   data: any
 }
 
-async function scrapeData() {
+async function scrapeData(props:{ 
+  categoryId: number | number[] | undefined,
+  quizId: number | number[] | undefined,
+}) {
   try {
     const loginUrl = 'https://apics.partnerrc.com/am/@@login'; // Login URL
     const exploreUrl = 'https://apics.partnerrc.com/cscp2023/explore'; // Replace with the URL to scrape
 
-    const browser = await puppeteer.launch({ headless: false, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    // const browser = await puppeteer.launch({ headless: false, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
     await page.setJavaScriptEnabled(true);
@@ -70,29 +69,35 @@ async function scrapeData() {
       await page.goto(exploreUrl);
     }
     
-    const gscnSelector = await page.locator('._2w-kjWxO').waitHandle();
-    const gscnData = await gscnSelector?.evaluate((el: Element) => {
-      return Array.from(el.querySelectorAll('[xqa*=domain]')).map((div: any, i: number) => {
-        div.scrollIntoView({ behavior: 'smooth' });
-        div.click();
-        return { title: div.innerText, id: i };
+    let gscnData:any[] = [];
+    const gscnPSelector = `._2w-kjWxO >div:nth-child(${props.categoryId})`;
+    if(props.categoryId) {
+      const gscnSelector = await page.locator(gscnPSelector + ' [xqa*=domain]').waitHandle();
+      await gscnSelector.click();
+    } else {
+      const gscnSelector = await page.locator('._2w-kjWxO').waitHandle();
+      gscnData = await gscnSelector?.evaluate((el: Element) => {
+        return Array.from(el.querySelectorAll('[xqa*=domain]')).map((div: any, i: number) => {
+          return { 
+            title: div.innerText, 
+            data: JSON.stringify({ xqa: div.getAttribute('xqa') }), 
+          };
+        });
       });
-    });
+    }
+
+    if(props.categoryId) await page.locator(`${gscnPSelector}[class*="_3bMNCRqJ"]`).waitHandle();
     
-    const articlesPath = '[xqa="accordion"], article'.split(',');
-    const articlesTitlePath = `${articlesPath}, ._2-BcwAqe + div > span:nth-child(1)`.split(',');
-    const articlesDescPath = `${articlesPath}, ._2-BcwAqe + div [xqa="shortdesc"] p`.split(',');
-    const articlesSelector = await page.locator(typeof articlesPath != 'undefined' ? articlesPath[0] : '[xqa="accordion"]').waitHandle();
-    const articles = await articlesSelector?.evaluate(el =>
-      Array.from(el.querySelectorAll(typeof articlesPath != 'undefined' ? articlesPath[1] : 'article')).map((article: any) => ({
-        title: article.querySelector(typeof articlesTitlePath != 'undefined' ? articlesTitlePath[2] : '._2-BcwAqe + div > span:nth-child(1)')?.innerText,
-        description: article.querySelector(typeof articlesDescPath != 'undefined' ? articlesDescPath[2] : '[xqa="shortdesc"] p')?.innerText,
-        element: article
+    const quizSelector = await page.locator('[xqa="accordion"]').waitHandle();
+    const quiz = await quizSelector?.evaluate(el =>
+      Array.from(el.querySelectorAll('article')).map((article: any) => ({
+        title: article.querySelector('._2-BcwAqe + div > span:nth-child(1)')?.innerText,
+        description: article.querySelector('[xqa="shortdesc"] p')?.innerText,
       }))
     )
 
-    const data = [];
-    for (const { title, description, element } of articles) {
+    const data: { title: string; description: string; }[] = [];
+    for (const { title, description } of quiz) {
       data.push({ title, description });
     }
 
@@ -100,13 +105,27 @@ async function scrapeData() {
     db.serialize(() => {
       if (gscnData) {
         gscnData.forEach((category: any) => {
-          db.run("INSERT INTO categories (title) VALUES (?)", category.title);
+          db.get("SELECT COUNT(*) as count FROM categories WHERE title = ?", category.title, (err, row:any) => {
+            if (err) {
+              throw new Error(`Failed to check if category title exists: ${err.message}`);
+            }
+            if (row.count === 0) {
+              db.run("INSERT INTO categories (title, data) VALUES (?, ?)", category.title, category.data);
+            }
+          });
         });
       }
 
-      if (articles) {
-        articles.forEach((article: any) => {
-          db.run("INSERT INTO articles (title, description) VALUES (?, ?)", article.title, article.description);
+      if (quiz) {
+        quiz.forEach((quiz: any) => {
+          db.get("SELECT COUNT(*) as count FROM quiz WHERE title = ?", quiz.title, (err, row:any) => {
+            if (err) {
+              throw new Error(`Failed to check if title exists: ${err.message}`);
+            }
+            if (row.count === 0) {
+              db.run("INSERT INTO quiz (title, description, category_id) VALUES (?, ?, ?)", quiz.title, quiz.description, props.categoryId || 1);
+            }
+          });
         });
       }
     });
@@ -134,7 +153,11 @@ export default async function handler(
   res: NextApiResponse<ResponseData>
 ) {
   try {
-    const scrapedData = await scrapeData();
+    const categoryId = Number(req.query.categoryId);
+    const scrapedData = await scrapeData({
+      categoryId: isNaN(categoryId) ? undefined : categoryId,
+      quizId: Number(req.query.quizId),
+    });
     res.status(200).json({ message: 'success', data: scrapedData });
   } catch (error:any) {
     res.status(500).json({
