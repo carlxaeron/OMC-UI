@@ -4,6 +4,7 @@ import { sanityFetch } from "@/sanity/client";
 import { mapping } from "./mapping";
 import '@/app/global.css';
 import AnimatePresence from "./components/Animate";
+import { FaTachometerAlt, FaUsers, FaCog, FaBook, FaComments } from 'react-icons/fa';
 
 type Props = {
   params: { id: string }
@@ -45,13 +46,40 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" /> */}
       </head>
       <body>
-        <AnimatePresence>
+      <AnimatePresence>
           <Provider data={{}}>
-            {/* <ThirdwebProvider> */}
-            <main>
-              {children}
-            </main>
-            {/* </ThirdwebProvider> */}
+            <div className="flex h-screen">
+              <aside className="w-64 bg-black text-white flex flex-col">
+                <div className="p-4 text-lg font-bold">Admin Panel</div>
+                <nav className="flex-1">
+                  <ul>
+                    <li className="p-4 hover:bg-gray-700 flex items-center">
+                      <FaTachometerAlt className="mr-2" />
+                      <a href="#">Dashboard</a>
+                    </li>
+                    <li className="p-4 hover:bg-gray-700 flex items-center">
+                      <FaBook className="mr-2" />
+                      <a href="#">Courses</a>
+                    </li>
+                    <li className="p-4 hover:bg-gray-700 flex items-center">
+                      <FaComments className="mr-2" />
+                      <a href="#">Communication</a>
+                    </li>
+                    <li className="p-4 hover:bg-gray-700 flex items-center">
+                      <FaUsers className="mr-2" />
+                      <a href="#">Users</a>
+                    </li>
+                    <li className="p-4 hover:bg-gray-700 flex items-center">
+                      <FaCog className="mr-2" />
+                      <a href="#">Settings</a>
+                    </li>
+                  </ul>
+                </nav>
+              </aside>
+              <main className="flex-1 p-8">
+                {children}
+              </main>
+            </div>
           </Provider>
         </AnimatePresence>
       </body>
