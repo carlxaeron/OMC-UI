@@ -16,8 +16,8 @@ async function scrapeQuiz(page:any) {
       answers.push({ text, isCorrect: label?.textContent?.includes('Correct') });
     });
     return {
-      rationale: el.querySelector('div:nth-child(1) > h2 + div')?.textContent,
-      question: el.querySelector('._2sv26PNy > div > p')?.textContent,
+      rationale: el.querySelector('div:nth-child(1) > h2 + div')?.innerHTML,
+      question: el.querySelector('._2sv26PNy > div')?.innerHTML,
       answers,
     }
   });
@@ -31,17 +31,17 @@ async function scrapeData(props:{
   try {
     const loginUrl = 'https://apics.partnerrc.com/am/@@login'; // Login URL
     const exploreUrl = 'https://apics.partnerrc.com/cscp2023/explore'; // Replace with the URL to scrape
+    const DEBUG = typeof process.env.DEBUG === 'string' ? (process.env.DEBUG == 'true' ? true : false) : true;
 
-    // const browser = await puppeteer.launch({ headless: false, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-    const browser = await puppeteer.launch();
+    const browser = !DEBUG ? await puppeteer.launch() : await puppeteer.launch({ headless: false, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
 
     await page.setJavaScriptEnabled(true);
-    await page.setViewport({width: 1080, height: 1024});
+    await page.setViewport({width: 1280, height: 1024});
 
     // Retrieve cookies from the database
     const cookies = await new Promise<any[]>((resolve, reject) => {
-      db.all("SELECT * FROM cookies", (err, rows) => {
+      db.all("SELECT * FROM tbl_cookie", (err, rows) => {
         if (err) {
           reject(err);
         } else {
@@ -110,7 +110,7 @@ async function scrapeData(props:{
     const quizzesSeletor = `[xqa="accordion"]`;
     if(props.quizId) {
       const quizzesData = await new Promise<any[]>((resolve, reject) => {
-        db.all("SELECT * FROM quiz where category_id = ?", props.categoryId || 1, (err, rows) => {
+        db.all("SELECT * FROM tbl_quiz where category_id = ?", props.categoryId || 1, (err, rows) => {
           if (err) {
             reject(err);
           } else {
@@ -118,7 +118,7 @@ async function scrapeData(props:{
           }
         });
       });
-      const selectedQuiz = quizzesData.filter((quiz: any, quizI) => quizI === props.quizId)[0];
+      const selectedQuiz = quizzesData.filter((quiz: any, quizI) => (quizI + 1) === props.quizId)[0];
 
       if(props.quizId !== 1) {
         const quizS = await page.locator(`${quizzesSeletor} article:nth-child(${props.quizId})`).waitHandle()
@@ -148,7 +148,7 @@ async function scrapeData(props:{
         try {
           await Promise.race([
             page.locator('[xqa="progression question-feedback"] [xqa="action begin"]').waitHandle(),
-            new Promise((resolve) => setTimeout(resolve, 10000))
+            new Promise((resolve) => setTimeout(resolve, 5000))
           ]);
           const hasRestart = await quizPageSelector?.evaluate((el: Element) => {
             return el.querySelector('[xqa="action restart"]') ? true : false
@@ -164,7 +164,6 @@ async function scrapeData(props:{
         let isBtnDisabled = false;
         const next = '[xqa="action submit"] > *:nth-child(2) >';
         const nextBtn = next + ' button:not([disabled])';
-        const nextBtnDisabled = next + ' button[disabled]';
         try {
           await Promise.race([
             page.locator(nextBtn).waitHandle(),
@@ -187,15 +186,24 @@ async function scrapeData(props:{
         
         db.serialize(() => {
           questionsData.forEach((question: any) => {
-            db.run("INSERT INTO questions (question, rationale, quiz_id) VALUES (?, ?, ?)", question.question, question.rationale, selectedQuiz.id);
-            db.get("SELECT last_insert_rowid() as id", (err, row:any) => {
+            db.get("SELECT id, COUNT(*) as count FROM tbl_quiz_question WHERE question = ? AND quiz_id = ? AND rationale = ?", question.question, selectedQuiz.id, question.rationale, (err:any, row:any) => {
               if (err) {
-                throw new Error(`Failed to get last inserted row id: ${err.message}`);
+                throw new Error(`Failed to check if question exists: ${err.message}`);
               }
-              if(row.id) {
-                question.answers.forEach((answer: any) => {
-                  db.run("INSERT INTO answers (answer, is_correct, question_id) VALUES (?, ?, ?)", answer.text, answer.isCorrect ? 1 : 0, row.id);
+              if (row.count === 0) {
+                db.run("INSERT INTO tbl_quiz_question (question, rationale, quiz_id) VALUES (?, ?, ?)", question.question, question.rationale, selectedQuiz.id);
+                db.get("SELECT last_insert_rowid() as id", (err, row:any) => {
+                  if (err) {
+                    throw new Error(`Failed to get last inserted row id: ${err.message}`);
+                  }
+                  if(row.id) {
+                    question.answers.forEach((answer: any) => {
+                      db.run("INSERT INTO tbl_question_answer (answer, is_correct, question_id) VALUES (?, ?, ?)", answer.text, answer.isCorrect ? 1 : 0, row.id);
+                    });
+                  }
                 });
+              } else {
+                console.log('Question already exists:', row.id);
               }
             });
           });
@@ -203,14 +211,19 @@ async function scrapeData(props:{
       }
       if(quizPageType.hasRestart) {
         await page.locator('[xqa="action restart"]').click();
+
+        
       }
     } else {
       const quizSelector = await page.locator(`${quizzesSeletor}`).waitHandle();
       quiz = await quizSelector?.evaluate(el =>
-        Array.from(el.querySelectorAll('article')).map((article: any) => ({
-          title: article.querySelector('._2-BcwAqe + div > span:nth-child(1)')?.innerText,
-          description: article.querySelector('[xqa="shortdesc"] p')?.innerText,
-        }))
+        Array.from(el.querySelectorAll('article')).map((article: any, articlei) => {
+          article.click();
+          return {
+            title: article.querySelector('._2-BcwAqe + div > span:nth-child(1)')?.innerText,
+            description: article.querySelector('[xqa="shortdesc"] p')?.innerText,
+          }
+        })
       )
   
       const data: { title: string; description: string; }[] = [];
@@ -223,12 +236,12 @@ async function scrapeData(props:{
     db.serialize(() => {
       if (gscnData) {
         gscnData.forEach((category: any) => {
-          db.get("SELECT COUNT(*) as count FROM categories WHERE title = ?", category.title, (err, row:any) => {
+          db.get("SELECT COUNT(*) as count FROM tbl_category WHERE title = ?", category.title, (err, row:any) => {
             if (err) {
               throw new Error(`Failed to check if category title exists: ${err.message}`);
             }
             if (row.count === 0) {
-              db.run("INSERT INTO categories (title, data) VALUES (?, ?)", category.title, category.data);
+              db.run("INSERT INTO tbl_category (title, data) VALUES (?, ?)", category.title, category.data);
             }
           });
         });
@@ -236,12 +249,12 @@ async function scrapeData(props:{
 
       if (quiz) {
         quiz.forEach((quiz: any) => {
-          db.get("SELECT COUNT(*) as count FROM quiz WHERE title = ?", quiz.title, (err, row:any) => {
+          db.get("SELECT COUNT(*) as count FROM tbl_quiz WHERE title = ?", quiz.title, (err, row:any) => {
             if (err) {
               throw new Error(`Failed to check if title exists: ${err.message}`);
             }
             if (row.count === 0) {
-              db.run("INSERT INTO quiz (title, description, category_id) VALUES (?, ?, ?)", quiz.title, quiz.description, props.categoryId || 1);
+              db.run("INSERT INTO tbl_quiz (title, description, category_id) VALUES (?, ?, ?)", quiz.title, quiz.description, props.categoryId || 1);
             }
           });
         });
@@ -252,15 +265,15 @@ async function scrapeData(props:{
       // Save cookies to the database
       const newCookies = await page.cookies();
       db.serialize(() => {
-        db.run("DELETE FROM cookies");
+        db.run("DELETE FROM tbl_cookie");
         newCookies.forEach((cookie: any) => {
-          db.run("INSERT INTO cookies (name, value, domain, path, expires, size, httpOnly, secure, session, sameSite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+          db.run("INSERT INTO tbl_cookie (name, value, domain, path, expires, size, httpOnly, secure, session, sameSite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
             cookie.name, cookie.value, cookie.domain, cookie.path, cookie.expires, cookie.size, cookie.httpOnly ? 1 : 0, cookie.secure ? 1 : 0, cookie.session ? 1 : 0, cookie.sameSite);
         });
       });
     }
 
-    page.close();
+    if(!DEBUG) page.close();
 
     return { categories: gscnData, data };
   } catch (error:any) {
