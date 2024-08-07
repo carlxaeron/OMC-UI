@@ -4,6 +4,7 @@ import { sanityFetch } from "@/sanity/client";
 import { mapping } from "./mapping";
 import '@/app/global.css';
 import AnimatePresence from "./components/Animate";
+import { SideMenu } from "./components/admin/SideMenu";
 
 type Props = {
   params: { id: string }
@@ -17,7 +18,7 @@ export async function generateMetadata(
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   // const [data]: any = await sanityFetch({ query: mapping.SETTINGS });
-  const data:any = {};
+  const data: any = {};
 
   const title = data.title || 'Title';
   const description = data.siteDescription || 'Description';
@@ -48,6 +49,9 @@ export default async function RootLayout({
         <AnimatePresence>
           <Provider data={{}}>
             {/* <ThirdwebProvider> */}
+            <nav className="w-1/4 bg-black h-screen">
+              <SideMenu />
+            </nav>
             <main>
               {children}
             </main>
