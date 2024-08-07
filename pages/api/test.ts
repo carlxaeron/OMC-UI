@@ -27,6 +27,7 @@ async function scrapeQuiz(page:any) {
 async function scrapeData(props:{ 
   categoryId: number | number[] | undefined,
   quizId: number | number[] | undefined,
+  delete: boolean | undefined,
 }) {
   try {
     const loginUrl = 'https://apics.partnerrc.com/am/@@login'; // Login URL
