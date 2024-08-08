@@ -1,9 +1,7 @@
-import Provider from "./context/provider";
+import Provider from "@/app/context/provider";
 import { Metadata, ResolvingMetadata } from "next";
-import { sanityFetch } from "@/sanity/client";
-import { mapping } from "./mapping";
 import '@/app/global.css';
-import AnimatePresence from "./components/Animate";
+import { SideMenu } from "@/app/components/admin/SideMenu";
 
 type Props = {
   params: { id: string }
@@ -46,16 +44,17 @@ export default async function RootLayout({
         {/* <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" /> */}
       </head>
-      <body>
-        <AnimatePresence>
-          <Provider data={{}}>
-            {/* <ThirdwebProvider> */}
-            <main>
+      <body className={process.env.NEXT_PUBLIC_HIDE && "w-[1366px]"}>
+        <Provider data={{}}>
+          <main className="flex">
+            <nav className="w-[240px] bg-black h-screen">
+              <SideMenu />
+            </nav>
+            <section className="w-[calc(100%-240px)] p-4">
               {children}
-            </main>
-            {/* </ThirdwebProvider> */}
-          </Provider>
-        </AnimatePresence>
+            </section>
+          </main>
+        </Provider>
       </body>
     </html>
   )

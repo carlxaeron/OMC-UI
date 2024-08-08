@@ -4,17 +4,18 @@
 
 // import DemoPage from "./demo/page";
 // import Container from '@mui/material/Container';
-// import { Metadata } from "next";
+import { Metadata } from "next";
+import { PageHeader } from "../components/admin/PageHeader";
 
-// export const metadata: Metadata = {
-//   title: "Home",
-//   description: "",
-// };
+export const metadata: Metadata = {
+  title: "Dashboard",
+  description: "",
+};
 
 export default function IndexPage() {
   return (
     <>
-      Dashboard
+      <PageHeader title={process.env.NEXT_PUBLIC_HIDE === "true" ? 'Testing Title' : 'Dashboard'} />
     </>
   );
 }
