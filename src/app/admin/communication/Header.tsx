@@ -7,7 +7,6 @@ export default function PageHeader(props: any = {}) {
   return <AdminPageHeader 
     // eslint-disable-next-line react/no-children-prop
     right={<>
-      <Button variant="filled" size="md" color="blue" className="">Add Course</Button>
       <button>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -23,5 +22,5 @@ export default function PageHeader(props: any = {}) {
         </svg>
       </button>
     </>}
-    title={process.env.NEXT_PUBLIC_HIDE === "true" ? 'Testing Title' : 'Courses'} />
+    title={process.env.NEXT_PUBLIC_HIDE === "true" ? 'Testing Title' : 'Communication'} />
 }

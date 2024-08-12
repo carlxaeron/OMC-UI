@@ -50,7 +50,7 @@ export function SideMenu() {
           <ul className="space-y-2">
             <LinkComp link='/admin' text="Dashboard" active={true} side={<FontAwesomeIcon icon={faChartBar} />} />
             <LinkComp link="/admin/courses" text="Courses" active={undefined} side={<FontAwesomeIcon icon={faBook} />} />
-            <LinkComp link='' text="Communication" active={undefined} side={<FontAwesomeIcon icon={faComments} />} />
+            <LinkComp link='/admin/communication' text="Communication" active={undefined} side={<FontAwesomeIcon icon={faComments} />} />
             <LinkComp link="" text="Revenue" active={undefined} side={<FontAwesomeIcon icon={faDollarSign} />} />
             <LinkComp link="" text="Setting" active={undefined} side={<FontAwesomeIcon icon={faCog} />} />
           </ul>
