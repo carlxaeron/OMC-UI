@@ -4,6 +4,7 @@ import { sanityFetch } from "@/sanity/client";
 import { mapping } from "./mapping";
 import '@/app/global.css';
 import AnimatePresence from "./components/Animate";
+import Template from "./components/Template";
 
 type Props = {
   params: { id: string }
@@ -50,9 +51,11 @@ export default async function RootLayout({
         <AnimatePresence>
           <Provider data={{}}>
             {/* <ThirdwebProvider> */}
-            <main>
-              {children}
-            </main>
+            <Template>
+              <main>
+                {children}
+              </main>
+            </Template>
             {/* </ThirdwebProvider> */}
           </Provider>
         </AnimatePresence>

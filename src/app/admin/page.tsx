@@ -5,17 +5,25 @@
 // import DemoPage from "./demo/page";
 // import Container from '@mui/material/Container';
 import { Metadata } from "next";
-import { PageHeader } from "../components/admin/PageHeader";
+import PageHeader from "./Header";
+import { Card } from "@material-tailwind/react";
+import Dashboard from "./Dashboard";
+import Reviews from "./Reviews";
+import Courses from "./Courses";
 
 export const metadata: Metadata = {
   title: "Dashboard",
   description: "",
 };
 
-export default function IndexPage() {
+export default function DashboardPage() {
   return (
     <>
-      <PageHeader title={process.env.NEXT_PUBLIC_HIDE === "true" ? 'Testing Title' : 'Dashboard'} />
+      <PageHeader />
+      {/* eslint-disable-next-line react/no-children-prop */}
+      <Dashboard />
+      <Reviews />
+      <Courses />
     </>
   );
 }
