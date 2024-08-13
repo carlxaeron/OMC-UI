@@ -4,6 +4,7 @@ import { PageHeader } from "@/app/components/admin/PageHeader";
 import { Button, Card, Input, Typography } from "@material-tailwind/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import InputComponent from "@/app/components/admin/Input";
 
 const TABLE_HEAD = ["Customer", "Date", "Type", "Amount"];
 const TABLE_ROWS = [
@@ -121,14 +122,7 @@ export default function Transactions() {
     <section className="mt-4 md:mt-0 flex flex-col gap-4">
       <PageHeader title="Transactions" />
       <div className="flex md:flex-row flex-col gap-4 justify-between">
-        <div className="relative flex md:w-72">
-          <Input label="Search User" type="text" 
-          className="pr-6"
-          containerProps={{
-            className: "min-w-0",
-          }} />
-          <FontAwesomeIcon className="absolute right-1 top-1/2 transform -translate-y-1/2" icon={faSearch} />
-        </div>
+        <InputComponent className="md:w-72"/>
         <Button>Filter</Button>
       </div>
       <TableTxn />
