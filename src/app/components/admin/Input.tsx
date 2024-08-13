@@ -10,7 +10,7 @@ export default function InputComponent(props: { className?: string }) {
       containerProps={{
         className: "min-w-0",
       }} />
-      <FontAwesomeIcon className="absolute right-1 top-1/2 transform -translate-y-1/2" icon={faSearch} />
+      <FontAwesomeIcon className="absolute right-1 top-1/2 transform -translate-y-1/2 max-w-4" icon={faSearch} />
     </div>
   );
 }

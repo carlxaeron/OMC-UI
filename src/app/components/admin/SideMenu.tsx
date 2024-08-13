@@ -50,16 +50,16 @@ export function SideMenu() {
         {/* Navigation links */}
         <nav className="mt-4">
           <ul className="space-y-2">
-            <LinkComp link='/admin' text="Dashboard" active={pathname === '/admin'} side={<FontAwesomeIcon icon={faChartBar} />} />
-            <LinkComp link="/admin/courses" text="Courses" active={pathname === '/admin/courses'} side={<FontAwesomeIcon icon={faBook} />} />
-            <LinkComp link='/admin/communication' text="Communication" active={pathname === '/admin/communication'} side={<FontAwesomeIcon icon={faComments} />} />
-            <LinkComp link="/admin/revenue" text="Revenue" active={pathname === '/admin/revenue'} side={<FontAwesomeIcon icon={faDollarSign} />} />
-            <LinkComp link="/admin/setting" text="Setting" active={pathname === '/admin/setting'} side={<FontAwesomeIcon icon={faCog} />} />
+            <LinkComp link='/admin' text="Dashboard" active={pathname === '/admin'} side={<FontAwesomeIcon className="w-5" icon={faChartBar} />} />
+            <LinkComp link="/admin/courses" text="Courses" active={pathname === '/admin/courses'} side={<FontAwesomeIcon className="w-5" icon={faBook} />} />
+            <LinkComp link='/admin/communication' text="Communication" active={pathname === '/admin/communication'} side={<FontAwesomeIcon className="w-5" icon={faComments} />} />
+            <LinkComp link="/admin/revenue" text="Revenue" active={pathname === '/admin/revenue'} side={<FontAwesomeIcon className="w-5" icon={faDollarSign} />} />
+            <LinkComp link="/admin/setting" text="Setting" active={pathname === '/admin/setting'} side={<FontAwesomeIcon className="w-5" icon={faCog} />} />
           </ul>
         </nav>
         <div className="flex-col flex justify-end flex-1 md:p-4 p-1">
           <div>
-            <Avatar src={`/assets/images/avatar${isMobile ? '' : '-white'}.svg`} alt="User Avatar" />
+            <Avatar className="max-w-[50px]" src={`/assets/images/avatar${isMobile ? '' : '-white'}.svg`} alt="User Avatar" />
             <span className="md:text-white block md:inline text-black md:ml-2 text-xs md:text-lg">Hi, User</span>
           </div>
         </div>

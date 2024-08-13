@@ -31,11 +31,11 @@ export default function Review(props: {
         <div>
           Rating: 
           <span className="ml-2 text-gray-200">
-            <FontAwesomeIcon icon={faStar} className="text-[#EAB308]" />
-            <FontAwesomeIcon icon={faStar} className="text-[#EAB308]" />
-            <FontAwesomeIcon icon={faStar} className="text-[#EAB308]" />
-            <FontAwesomeIcon icon={faStar} className="text-[#EAB308]" />
-            <FontAwesomeIcon icon={faStar} />
+            <FontAwesomeIcon icon={faStar} className="text-[#EAB308] max-w-4" />
+            <FontAwesomeIcon icon={faStar} className="text-[#EAB308] max-w-4" />
+            <FontAwesomeIcon icon={faStar} className="text-[#EAB308] max-w-4" />
+            <FontAwesomeIcon icon={faStar} className="text-[#EAB308] max-w-4" />
+            <FontAwesomeIcon icon={faStar} className="max-w-4" />
           </span>
         </div>
         <div>
