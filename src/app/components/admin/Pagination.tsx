@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Button, IconButton } from "@material-tailwind/react";
 import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { Context } from "@/app/context/provider";
  
 export function Pagination() {
+  const ctx:any = useContext(Context);
+  const isMobile = ctx.width < 768;
   const [active, setActive] = React.useState(1);
  
   const getItemProps = (index) =>
@@ -32,7 +35,7 @@ export function Pagination() {
         onClick={prev}
         disabled={active === 1}
       >
-        <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" /> Previous
+        <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" /> {isMobile ? '' : 'Previous'}
       </Button>
       <div className="flex items-center gap-2">
         <IconButton {...getItemProps(1)}>1</IconButton>
@@ -47,7 +50,7 @@ export function Pagination() {
         onClick={next}
         disabled={active === 5}
       >
-        Next
+        {isMobile ? '' : "Next"}
         <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
       </Button>
     </div>
