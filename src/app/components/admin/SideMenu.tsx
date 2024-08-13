@@ -5,7 +5,7 @@ import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartBar, faBook, faComments, faDollarSign, faCog } from '@fortawesome/free-solid-svg-icons';
 import { Avatar } from "@material-tailwind/react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export function SideMenu() {
   const ctx:any = React.useContext(Context);
@@ -15,6 +15,7 @@ export function SideMenu() {
   const classes = {
     nav: `md:w-[240px] ${isMobile ? 'bg-white w-[60px]' : 'bg-[#0F172A]'} h-auto`,
   }
+  const pathname = usePathname();
 
   function LinkComp(props: any) {
     const ctx:any = React.useContext(Context);
@@ -49,11 +50,11 @@ export function SideMenu() {
         {/* Navigation links */}
         <nav className="mt-4">
           <ul className="space-y-2">
-            <LinkComp link='/admin' text="Dashboard" active={true} side={<FontAwesomeIcon icon={faChartBar} />} />
-            <LinkComp link="/admin/courses" text="Courses" active={undefined} side={<FontAwesomeIcon icon={faBook} />} />
-            <LinkComp link='/admin/communication' text="Communication" active={undefined} side={<FontAwesomeIcon icon={faComments} />} />
-            <LinkComp link="/admin/revenue" text="Revenue" active={undefined} side={<FontAwesomeIcon icon={faDollarSign} />} />
-            <LinkComp link="" text="Setting" active={undefined} side={<FontAwesomeIcon icon={faCog} />} />
+            <LinkComp link='/admin' text="Dashboard" active={pathname === '/admin'} side={<FontAwesomeIcon icon={faChartBar} />} />
+            <LinkComp link="/admin/courses" text="Courses" active={pathname === '/admin/courses'} side={<FontAwesomeIcon icon={faBook} />} />
+            <LinkComp link='/admin/communication' text="Communication" active={pathname === '/admin/communication'} side={<FontAwesomeIcon icon={faComments} />} />
+            <LinkComp link="/admin/revenue" text="Revenue" active={pathname === '/admin/revenue'} side={<FontAwesomeIcon icon={faDollarSign} />} />
+            <LinkComp link="/admin/setting" text="Setting" active={pathname === '/admin/setting'} side={<FontAwesomeIcon icon={faCog} />} />
           </ul>
         </nav>
         <div className="flex-col flex justify-end flex-1 md:p-4 p-1">

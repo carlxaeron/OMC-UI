@@ -1,5 +1,13 @@
-export default function DotButton(props: { className?: string }) {
-  return <button className={props.className}>
+export default function DotButton(props: { className?: string, onClick?: any }) {
+  const handleClick = (e: MouseEvent) => {
+    if (props.onClick) {
+      props.onClick(e);
+    }
+  };
+
+  return <button className={props.className}
+    onClick={handleClick}
+  >
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="h-5 w-5"

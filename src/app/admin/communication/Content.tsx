@@ -3,7 +3,7 @@
 import { Pagination } from "@/app/components/admin/Pagination";
 import Review from "@/app/components/admin/Review";
 import { Context } from "@/app/context/provider";
-import { Button, Checkbox, Option, Select, Tab, Tabs, TabsBody, TabsHeader } from "@material-tailwind/react";
+import { Button, Card, Checkbox, List, ListItem, Option, Popover, PopoverContent, Select, Tab, Tabs, TabsBody, TabsHeader, Textarea } from "@material-tailwind/react";
 import { useContext, useState } from "react";
 import MessagesTab from "./tabs/Messages";
 
@@ -12,6 +12,8 @@ export default function Content() {
   const isMobile = ctx.width <= 768;
   const [activeTab, setActiveTab] = useState("Reviews");
   const [showFilter, setShowFilter] = useState(false);
+  const [popover, setPopover] = useState({});
+  const [reply, setReply] = useState({});
 
   const data = [
     {
@@ -108,7 +110,32 @@ export default function Content() {
               <Filter />
               <TabsBodyBody>
                 {[...Array(5)].map((_, index) => (
-                  <Review key={index} />
+                  <Review
+                    className="relative"
+                    onMenuClick={(e, data) => setPopover({ [`p-${index}`]: { open: true } })}
+                    menuSlot={<>
+                      { popover[`p-${index}`]?.open && (
+                        <Card className="w-96 absolute right-0">
+                          <List>
+                            <ListItem onClick={e => {
+                              setReply({[`r-${index}`]: {open: true}});
+                              setPopover({});
+                            }}>Reply</ListItem>
+                          </List>
+                        </Card>
+                      ) }
+                    </>}
+                    bottomSlot={
+                      <>
+                        { reply[`r-${index}`]?.open && (
+                          <div className="mt-4">
+                            <Textarea label="Reply">Hello</Textarea>
+                            <Button color="blue" onClick={() => setReply({})}>Save</Button>
+                          </div>
+                        )}
+                      </>
+                    }
+                    key={index} />
                 ))}
                 <div className="flex justify-center">
                   <Pagination />
