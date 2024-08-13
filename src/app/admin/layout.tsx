@@ -9,11 +9,11 @@ export default async function AdminLayout({
   children: React.ReactNode
 }) {
   return (
-    <main className="flex min-h-[100vh]">
+    <div className="flex min-h-[100vh]">
       <SideMenu />
-      <section className="md:w-[calc(100%-240px)] p-4 mb-6">
+      <section className="md:w-[calc(100%-240px)] flex-1 p-4 mb-6">
         {children}
       </section>
-    </main>
+    </div>
   )
 }

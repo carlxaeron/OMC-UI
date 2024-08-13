@@ -13,7 +13,7 @@ export function SideMenu() {
 
   const isMobile = ctx.width <= 768;
   const classes = {
-    nav: `md:w-[240px] ${isMobile ? 'bg-white' : 'bg-[#0F172A]'} h-auto`,
+    nav: `md:w-[240px] ${isMobile ? 'bg-white w-[60px]' : 'bg-[#0F172A]'} h-auto`,
   }
 
   function LinkComp(props: any) {
@@ -41,7 +41,8 @@ export function SideMenu() {
         { !isMobile && (
           <div className="flex p-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.svg" alt="Logo" className={`h-auto ${process.env.NEXT_PUBLIC_HIDE ? 'opacity-0' : ''}`} />
+            {/* <img src="/logo.svg" alt="Logo" className={`h-auto ${process.env.NEXT_PUBLIC_HIDE ? 'opacity-0' : ''}`} /> */}
+            <h2 className="text-white font-bold text-2xl">{process.env.NEXT_PUBLIC_TITLE}</h2>
           </div>
         ) }
 
@@ -51,11 +52,11 @@ export function SideMenu() {
             <LinkComp link='/admin' text="Dashboard" active={true} side={<FontAwesomeIcon icon={faChartBar} />} />
             <LinkComp link="/admin/courses" text="Courses" active={undefined} side={<FontAwesomeIcon icon={faBook} />} />
             <LinkComp link='/admin/communication' text="Communication" active={undefined} side={<FontAwesomeIcon icon={faComments} />} />
-            <LinkComp link="" text="Revenue" active={undefined} side={<FontAwesomeIcon icon={faDollarSign} />} />
+            <LinkComp link="/admin/revenue" text="Revenue" active={undefined} side={<FontAwesomeIcon icon={faDollarSign} />} />
             <LinkComp link="" text="Setting" active={undefined} side={<FontAwesomeIcon icon={faCog} />} />
           </ul>
         </nav>
-        <div className="flex-col flex justify-end flex-1 p-4">
+        <div className="flex-col flex justify-end flex-1 md:p-4 p-1">
           <div>
             <Avatar src={`/assets/images/avatar${isMobile ? '' : '-white'}.svg`} alt="User Avatar" />
             <span className="md:text-white block md:inline text-black md:ml-2 text-xs md:text-lg">Hi, User</span>

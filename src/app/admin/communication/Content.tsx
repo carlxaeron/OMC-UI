@@ -1,11 +1,18 @@
 'use client';
 
-import CourseCard from "@/app/components/admin/CourseCard";
-import { Card, Tab, TabPanel, Tabs, TabsBody, TabsHeader } from "@material-tailwind/react";
-import { useState } from "react";
+import { Pagination } from "@/app/components/admin/Pagination";
+import Review from "@/app/components/admin/Review";
+import { Context } from "@/app/context/provider";
+import { Button, Checkbox, Option, Select, Tab, Tabs, TabsBody, TabsHeader } from "@material-tailwind/react";
+import { useContext, useState } from "react";
+import MessagesTab from "./tabs/Messages";
 
 export default function Content() {
+  const ctx:any = useContext(Context);
+  const isMobile = ctx.width <= 768;
   const [activeTab, setActiveTab] = useState("Reviews");
+  const [showFilter, setShowFilter] = useState(false);
+
   const data = [
     {
       label: "Reviews",
@@ -28,8 +35,53 @@ export default function Content() {
       constantly trying to express ourselves and actualize our dreams.`,
     },
   ];
+
+  const Filter = () => {
+    const filter = (
+      <div className="flex flex-col md:flex-row gap-4">
+          <div className="md:w-auto w-1/2">
+            <Checkbox label={<span className="text-sm text-black">Has a Comment</span>} />
+          </div>
+          <div className="md:w-auto w-1/2">
+            <Checkbox label={<span className="text-sm text-black">Not Answered</span>} />
+          </div>
+          <div className="md:w-52 w-full">
+            <Select variant="standard" label="Rating">
+              <Option>All</Option>
+            </Select>
+          </div>
+          <div className="md:w-52 w-full">
+            <Select variant="standard" label="Sort By">
+              <Option>All</Option>
+            </Select>
+          </div>
+          <div className="flex-1 flex align-center justify-end">
+            <Button color="blue" className="md:w-auto w-full">Export to CSV</Button>
+          </div>
+        </div>
+    )
+
+    return (
+      <>
+        {!isMobile && filter}
+        {isMobile && (
+          <div className="mt-4">
+            {showFilter && filter}
+            <Button className="w-full mt-4" color="blue" onClick={() => setShowFilter(!showFilter)}>{showFilter ? 'Hide' : 'Show'} Filter </Button>
+          </div>
+        )}
+      </>
+    )
+  }
+
+  const TabsBodyBody = ({children}: {children: React.ReactNode}) => (
+    <div className="flex flex-col gap-6">
+      {children}
+    </div>
+  )
+
   return (
-    <>
+    <section>
       <Tabs value={activeTab}>
         <TabsHeader
           className="rounded-none border-b border-blue-gray-50 bg-transparent p-0"
@@ -43,19 +95,29 @@ export default function Content() {
               key={value}
               value={value}
               onClick={() => setActiveTab(value)}
-              className={`${activeTab === value ? "text-gray-900" : ""} w-auto`}
+              className={`${activeTab === value ? "text-gray-900" : ""} md:w-auto`}
             >
               {label}
             </Tab>
           ))}
         </TabsHeader>
-        <TabsBody>
-          
+        <TabsBody className="md:pr-20 flex flex-col gap-4 pt-4">
+          { activeTab === "Messages" && <MessagesTab /> }
+          { activeTab === "Reviews" && (
+            <>
+              <Filter />
+              <TabsBodyBody>
+                {[...Array(5)].map((_, index) => (
+                  <Review key={index} />
+                ))}
+                <div className="flex justify-center">
+                  <Pagination />
+                </div>
+              </TabsBodyBody>
+            </>
+          ) }
         </TabsBody>
       </Tabs>
-      {/* <Card>
-
-      </Card> */}
-    </>
+    </section>
   );
 }

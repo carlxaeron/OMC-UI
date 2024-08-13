@@ -19,7 +19,7 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   // const [data]: any = await sanityFetch({ query: mapping.SETTINGS });
   const data: any = {
-    title: process.env.NEXT_PUBLIC_HIDE ? 'Testing' : 'Dr Krizz Online',
+    title: process.env.NEXT_PUBLIC_HIDE ? 'Testing' : process.env.NEXT_PUBLIC_TITLE,
   };
 
   const title = data.title || 'Title';
