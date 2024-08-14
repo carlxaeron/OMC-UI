@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 
 export default function Content() {
   return (
-    <section className="container flex flex-col h-[100vh] justify-center m-auto md:px-4 px-8">
+    <section className="container flex flex-col justify-center m-auto md:px-4 px-8">
       <div className={`flex flex-col-reverse md:flex-row`}>
         <article className="flex-1 flex justify-center flex-col gap-4">
           <h2 className="text-3xl text-[2.4rem] font-bold md:text-left text-center" style={{lineHeight: '4rem'}}>Unlock Your Potential <br/>with {process.env.NEXT_PUBLIC_TITLE}</h2>

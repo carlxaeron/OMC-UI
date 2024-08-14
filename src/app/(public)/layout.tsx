@@ -1,4 +1,5 @@
 import { Metadata, ResolvingMetadata } from "next";
+import Header from "../components/public/Header";
 
 type Props = {
   params: { id: string }
@@ -37,6 +38,7 @@ export default async function PublicLayout({
 }) {
   return (
     <>
+      <Header />
       {children}
     </>
   )

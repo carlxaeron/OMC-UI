@@ -33,7 +33,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/app/components/AppAppBar.tsx.old"
-  ],
+, "src/app/(public)/layout.tsx"  ],
   "exclude": [
     "node_modules"
   ]
