@@ -58,7 +58,7 @@ export function SideMenu() {
           </ul>
         </nav>
         <div className="flex-col flex justify-end flex-1 md:p-4 p-1">
-          <div>
+          <div className="sticky bottom-0 left-0 w-full">
             <Avatar className="max-w-[50px]" src={`/assets/images/avatar${isMobile ? '' : '-white'}.svg`} alt="User Avatar" />
             <span className="md:text-white block md:inline text-black md:ml-2 text-xs md:text-lg">Hi, User</span>
           </div>

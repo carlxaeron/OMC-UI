@@ -1,7 +1,7 @@
 'use client';
 
-import { PageHeader } from "../components/admin/PageHeader";
-import CourseCard from "../components/admin/CourseCard";
+import { PageHeader } from "@/app/components/admin/PageHeader";
+import CourseCard from "@/app/components/admin/CourseCard";
 
 export default function Courses() {
   return (

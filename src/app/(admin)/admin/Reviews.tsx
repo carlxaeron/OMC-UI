@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardBody, Chip } from "@material-tailwind/react";
-import { PageHeader } from "../components/admin/PageHeader";
+import { PageHeader } from "@/app/components/admin/PageHeader";
 
 export default function Reviews() {
 

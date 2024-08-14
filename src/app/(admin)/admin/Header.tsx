@@ -1,8 +1,8 @@
 'use client';
 
 import { Button } from "@material-tailwind/react";
-import { PageHeader as AdminPageHeader } from "../components/admin/PageHeader";
-import DotButton from "../components/admin/DotButton";
+import { PageHeader as AdminPageHeader } from "@/app/components/admin/PageHeader";
+import DotButton from "@/app/components/admin/DotButton";
 
 export default function PageHeader(props: any = {}) {
   return <AdminPageHeader 
