@@ -19,7 +19,7 @@ export async function generateMetadata(
   // const [data]: any = await sanityFetch({ query: mapping.SETTINGS });
   const data:any = {};
 
-  const title = data.title || 'Title';
+  const title = data.title || process.env.NEXT_PUBLIC_TITLE || 'Title';
   const description = data.siteDescription || 'Description';
 
   settings = data;
@@ -41,8 +41,16 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" /> */}
+      <link rel="preconnect" href="https://fonts.gstatic.com/" crossOrigin="" />
+      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+      <link
+        rel="stylesheet"
+        as="style"
+        // onLoad="this.rel='stylesheet'"
+        href="https://fonts.googleapis.com/css2?display=swap&amp;family=Epilogue%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900"
+      />
+        <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
       </head>
       <body>
         <AnimatePresence>
