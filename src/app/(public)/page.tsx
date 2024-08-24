@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function IndexPage() {
   return (
     <>
-      test
+      <h1>Welcome to the Home page</h1>
     </>
   );
 }

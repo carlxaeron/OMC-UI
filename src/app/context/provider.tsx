@@ -1,5 +1,6 @@
 'use client';
 
+import { ThemeProvider } from "@material-tailwind/react";
 import React, { createContext, useState } from "react";
 
 export const Context = createContext({});
@@ -11,7 +12,9 @@ export default function Provider(props: { children: any; data: any; }) {
         <Context.Provider value={{
             ...props.data,
         }}>
-            <>{props.children}</>
+            <ThemeProvider>
+                {props.children}
+            </ThemeProvider>
         </Context.Provider>
     )
 }

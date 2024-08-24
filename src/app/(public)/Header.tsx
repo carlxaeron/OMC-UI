@@ -1,6 +1,45 @@
+'use client';
+
+import { Card, CardBody } from "@material-tailwind/react";
 import { mapping } from "./mapping";
+import {
+  ChevronDownIcon,
+} from "@heroicons/react/24/outline";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
+  const router = useRouter();
+
+  const [openMenu, setOpenMenu]:[any, any] = useState({});
+
+  const isOpen = (index:number) => openMenu[`menu-${index}`]?.open === true;
+  const handleMenuClick = (event:React.MouseEvent<HTMLAnchorElement>, data:any, i:number) => {
+    if(!data?.children) return;
+    else {
+      event.preventDefault();
+      // event.stopPropagation();
+      setOpenMenu({[`menu-${i}`]: { open: openMenu[`menu-${i}`]?.open !== true }});
+    }
+  }
+
+  const Atag = (props:any) => {
+    const { children, ...rest } = props;
+    if(props.tag === 'div') {
+      rest.className = `${rest.className} cursor-pointer`;
+    }
+    return React.createElement(props.tag, rest, children);
+  }
+
+  const handleRedirect = (event:React.MouseEvent<HTMLAnchorElement>, data: { path: string }) => {
+    event.preventDefault();
+    const href = data.path;
+    if (href) {
+      router.push(href);
+    }
+    setOpenMenu({});
+  };
+
   return (
     <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f4] px-10 py-3">
       <div className="flex items-center gap-4 text-[#111418]">
@@ -17,7 +56,31 @@ export default function Header() {
       <div className="flex flex-1 justify-end gap-8">
         <div className="flex items-center gap-9">
           { mapping.map((item, index) => (
-            <a key={index} className="text-[#111418] text-sm font-medium leading-normal" href="#">{item.metadata.title}</a>
+            <Atag key={index} tag={item.children ? 'div' : 'a'} className="text-[#111418] text-sm font-medium leading-normal flex items-center gap-2 relative" href={item.path} onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => Object.keys(openMenu).length < 1 && handleMenuClick(e, item, index)}>{item.metadata.title}
+              { item.children && (
+                <>
+                  <ChevronDownIcon
+                    strokeWidth={2.5}
+                    className={`hidden h-3 w-3 transition-transform lg:block ${
+                      isOpen(index) !== true ? "rotate-180" : ""
+                    }`}
+                  />
+                  { isOpen(index) === true && (
+                    <Card className="absolute top-0 right-0 top-full">
+                      <CardBody>
+                        <ul>
+                          { item.children.map((child, index2) => (
+                            <li key={index2}>
+                              <a href={child.path} onClick={e => handleRedirect(e, child)}>{child.metadata.title}</a>
+                            </li>
+                          )) }
+                        </ul>
+                      </CardBody>
+                    </Card>
+                  ) }
+                </>
+              ) }
+            </Atag>
           ))}
         </div>
         <div className="flex gap-2">

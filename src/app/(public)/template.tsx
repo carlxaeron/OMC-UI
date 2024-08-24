@@ -1,10 +1,15 @@
+'use client';
+
 import Header from "./Header";
+import { Button } from "@material-tailwind/react";
 
 export default function Template({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Header />
-      {children}
+      <section className="container mx-auto">
+        {children}
+      </section>
     </>
   );
 }

@@ -1,44 +1,46 @@
 export const mapping = [
   {
-    "path": "/#Home",
+    "path": "/",
     "metadata": {
       "title": "Home",
       "description": "Welcome to the Home page"
     }
   },
   {
-    "path": "/#Activities",
+    "path": "#",
     "metadata": {
-      "title": "Activities",
-      "description": "Welcome to the Activities page"
-    }
-  },
-  {
-    "path": "/#Lessons",
-    "metadata": {
-      "title": "Lessons",
-      "description": "Welcome to the Lessons page"
-    }
-  },
-  {
-    "path": "/#Stories",
-    "metadata": {
-      "title": "Stories",
-      "description": "Welcome to the Stories page"
-    }
-  },
-  {
-    "path": "/#Music",
-    "metadata": {
-      "title": "Music",
-      "description": "Welcome to the Music page"
-    }
-  },
-  {
-    "path": "/#Videos",
-    "metadata": {
-      "title": "Videos",
-      "description": "Welcome to the Videos page"
-    }
+      "title": "Missionaries",
+      "description": ""
+    },
+    "children": [
+      {
+        "path": "/missionaries/index",
+        "metadata": {
+          "title": "Missionaries",
+          "description": ""
+        }
+      },
+      {
+        "path": "/missionaries/support",
+        "metadata": {
+          "title": "Support Missionaries",
+          "description": ""
+        }
+      },
+      {
+        "path": "/missionaries/find-by-location",
+        "metadata": {
+          "title": "Find Missionaries By Location",
+          "description": ""
+        }
+      },
+      {
+        "path": "/missionaries/find-by-group",
+        "metadata": {
+          "title": "Find Missionaries By Group",
+          "description": ""
+        }
+      },
+    ],
   },
 ];
