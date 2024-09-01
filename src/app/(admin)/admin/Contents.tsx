@@ -6,8 +6,9 @@ import { Icon } from "../Top";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBitcoinSign, faDonate, faHandHoldingUsd, faHandshake, faWallet } from '@fortawesome/free-solid-svg-icons'
 import { ArrowUpIcon } from "@heroicons/react/24/outline";
+import Todo from "@/app/components/Todo";
 
-const SalesCard = ({ topText, bottomText, bottomRightText, icon, title }: { title?: string, topText?: JSX.Element | string, bottomText?: JSX.Element | string, bottomRightText?: JSX.Element, icon: JSX.Element }) => <Card className="rounded">
+const SalesCard = ({ topText, bottomText, bottomRightText, icon, title, children }: { title?: string, topText?: JSX.Element | string, bottomText?: JSX.Element | string, bottomRightText?: JSX.Element, icon: JSX.Element, children?: JSX.Element }) => <Card className="rounded">
   <CardBody className="h-full">
     { icon && <Icon>{icon}</Icon> }
     { title && <h2 className="text-lg font-bold text-black">{title}</h2> }
@@ -22,13 +23,14 @@ const SalesCard = ({ topText, bottomText, bottomRightText, icon, title }: { titl
         { bottomRightText && <span className="flex gap-2 items-center text-green-500 font-medium text-sm justify-end">{bottomRightText}</span> }
       </p>
     )}
+    { children }
   </CardBody>
 </Card>
 
 export default function Contents() {
   return (
     <div className="flex flex-row flex-wrap gap-5">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 flex-1">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 flex-1">
         <SalesCard
           icon={<FontAwesomeIcon className="text-blue-gray-500" icon={faDonate} />}
           topText="$34K"
@@ -80,11 +82,10 @@ export default function Contents() {
           title="News/Events about Payments"
         />
         <SalesCard
-          title="Todos (Tracking Progress, completed and on-going)"
-        />
-        <SalesCard
-          title="Profit this week"
-        />
+          title="Todos (Tracking Progress, completed and on-going)">
+          <br/>
+          <Todo />
+        </SalesCard>
       </div>
     </div>
   );
