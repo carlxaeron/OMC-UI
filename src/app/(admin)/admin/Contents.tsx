@@ -7,9 +7,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBitcoinSign, faDonate, faHandHoldingUsd, faHandshake, faWallet } from '@fortawesome/free-solid-svg-icons'
 import { ArrowUpIcon } from "@heroicons/react/24/outline";
 import Todo from "@/app/components/Todo";
+import { EventsDashboard } from "./events/Contents";
+import { PaymentsDashboard } from "./payments/Contents";
 
 const SalesCard = ({ topText, bottomText, bottomRightText, icon, title, children }: { title?: string, topText?: JSX.Element | string, bottomText?: JSX.Element | string, bottomRightText?: JSX.Element, icon: JSX.Element, children?: JSX.Element }) => <Card className="rounded">
-  <CardBody className="h-full">
+  <CardBody className="">
     { icon && <Icon>{icon}</Icon> }
     { title && <h2 className="text-lg font-bold text-black">{title}</h2> }
     { topText && (
@@ -29,8 +31,8 @@ const SalesCard = ({ topText, bottomText, bottomRightText, icon, title, children
 
 export default function Contents() {
   return (
-    <div className="flex flex-row flex-wrap gap-5">
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 flex-1">
+    <div className="flex flex-col gap-8">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <SalesCard
           icon={<FontAwesomeIcon className="text-blue-gray-500" icon={faDonate} />}
           topText="$34K"
@@ -74,13 +76,17 @@ export default function Contents() {
           bottomRightText={<>+40% <ArrowUpIcon className="h-3 w-3" /></>}
         />
       </div>
-      <div className="w-[400px] flex flex-col gap-5">
+      <div className="flex flex-row flex-wrap gap-7">
         <SalesCard
           title="Upcoming Group Sessions/e-Library News"
-        />
+        >
+          <EventsDashboard />
+        </SalesCard>
         <SalesCard
           title="News/Events about Payments"
-        />
+        >
+          <PaymentsDashboard />
+        </SalesCard>
         <SalesCard
           title="Todos (Tracking Progress, completed and on-going)">
           <br/>

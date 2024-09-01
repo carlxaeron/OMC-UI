@@ -1,4 +1,6 @@
-import { Squares2X2Icon, EnvelopeIcon } from '@heroicons/react/24/outline';
+import { faCalendar, faCalendarDays, faDonate, faHandHoldingUsd, faHandshake, faUsers, faWallet } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Squares2X2Icon, EnvelopeIcon, BellAlertIcon } from '@heroicons/react/24/outline';
 import Link from "next/link";
 
 export default function SideMenu() {
@@ -29,9 +31,16 @@ export default function SideMenu() {
       <h1 className="p-5 text-3xl font-bold">{process.env.NEXT_PUBLIC_TITLE} Admin</h1>
       <Nav title="Menu">
           <Li active title="Dashboard" link="/admin" left={<Squares2X2Icon className="h-6 w-6" />} />
+          <Li active={false} title="Users" link="/admin" left={<FontAwesomeIcon className="h-5 w-6" icon={faUsers} />}><Badge color='blue'>456,000</Badge></Li>
+          <Li active={false} title="Donations" link="/admin" left={<FontAwesomeIcon className="h-5 w-6" icon={faDonate} />} />
+          <Li active={false} title="Funds" link="/admin" left={<FontAwesomeIcon className="h-5 w-6" icon={faWallet} />} />
+          <Li active={false} title="Sponsors" link="/admin" left={<FontAwesomeIcon className="h-5 w-6" icon={faHandshake} />} />
+          <Li active={false} title="Earnings" link="/admin" left={<FontAwesomeIcon className="h-5 w-6" icon={faHandHoldingUsd} />} />
+          <Li active={false} title="Events" link="/admin/events" left={<FontAwesomeIcon className="h-5 w-6" icon={faCalendarDays} />} />
       </Nav>
       <Nav title="Support">
           <Li title="Inbox" link="/admin" left={<EnvelopeIcon className="h-6 w-6" />}><Badge color='red'>12</Badge></Li>
+          <Li title="Notifications" link="/admin" left={<BellAlertIcon className="h-6 w-6" />}><Badge color='red'>24</Badge></Li>
       </Nav>
     </aside>
   )
