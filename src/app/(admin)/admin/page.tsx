@@ -1,3 +1,5 @@
+
+import Contents from "./Contents";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -8,7 +10,7 @@ export const metadata: Metadata = {
 export default function AdminDashboard() {
   return (
     <>
-      <h1>Welcome to the Dashboard page</h1>
+      <Contents />
     </>
   );
 }
