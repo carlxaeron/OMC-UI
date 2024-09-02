@@ -32,7 +32,7 @@ const SalesCard = ({ topText, bottomText, bottomRightText, icon, title, children
 export default function Contents() {
   return (
     <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <SalesCard
           icon={<FontAwesomeIcon className="text-blue-gray-500" icon={faDonate} />}
           topText="$34K"
