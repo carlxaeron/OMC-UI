@@ -31,7 +31,7 @@ export default function SideMenu() {
       <h1 className="p-5 text-3xl font-bold">{process.env.NEXT_PUBLIC_TITLE} <span className="hidden md:inline">Admin</span></h1>
       <Nav title="Menu">
           <Li active title="Dashboard" link="/admin" left={<Squares2X2Icon className="h-6 w-6" />} />
-          <Li active={false} title="Users" link="/admin" left={<FontAwesomeIcon className="h-5 w-6" icon={faUsers} />}><Badge color='blue'>456,000</Badge></Li>
+          <Li active={false} title="Users" link="/admin" left={<FontAwesomeIcon className="h-5 w-6" icon={faUsers} />}><Badge color='blue'>567,000</Badge></Li>
           <Li active={false} title="Donations" link="/admin" left={<FontAwesomeIcon className="h-5 w-6" icon={faDonate} />} />
           <Li active={false} title="Funds" link="/admin" left={<FontAwesomeIcon className="h-5 w-6" icon={faWallet} />} />
           <Li active={false} title="Sponsors" link="/admin" left={<FontAwesomeIcon className="h-5 w-6" icon={faHandshake} />} />
