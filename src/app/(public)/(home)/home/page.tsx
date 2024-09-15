@@ -5,6 +5,7 @@
 // import DemoPage from "./demo/page";
 // import Container from '@mui/material/Container';
 import { Metadata } from "next";
+import Contents from "./Contents";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -12,9 +13,5 @@ export const metadata: Metadata = {
 };
 
 export default function IndexPage() {
-  return (
-    <>
-      <h1>Welcome to the Home page</h1>
-    </>
-  );
+  return <Contents />;
 }

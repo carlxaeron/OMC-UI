@@ -1,3 +1,6 @@
+import { faHandsHelping } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 type FontConfig = {
   width: number;
   height: number;
@@ -18,4 +21,8 @@ const Font: { [key: string]: (config: FontConfig) => JSX.Element } = {
 export default function FontIcon({ icon, w, h, ...props }: { icon: string, w?: number, h?: number }) {
   const IconComponent = Font[icon];
   return <IconComponent width={w || 18} height={h || 18} {...props} />;
+}
+
+export function DefaultIcon() {
+  return <FontAwesomeIcon className="h-5 w-6" icon={faHandsHelping} />; 
 }

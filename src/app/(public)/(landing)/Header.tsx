@@ -7,6 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { DefaultIcon } from "@/app/components/FontIcon";
 
 export default function Header() {
   const router = useRouter();
@@ -41,22 +42,17 @@ export default function Header() {
   };
 
   return (
-    <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f4] px-10 py-3">
+    <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f4] px-4 py-3">
       <div className="flex items-center gap-4 text-[#111418]">
         <div className="size-4">
-          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M24 4C25.7818 14.2173 33.7827 22.2182 44 24C33.7827 25.7818 25.7818 33.7827 24 44C22.2182 33.7827 14.2173 25.7818 4 24C14.2173 22.2182 22.2182 14.2173 24 4Z"
-              fill="currentColor"
-            ></path>
-          </svg>
+          <DefaultIcon />
         </div>
         <h2 className="text-[#111418] text-lg font-bold leading-tight tracking-[-0.015em]">{process.env.NEXT_PUBLIC_TITLE}</h2>
       </div>
       <div className="flex flex-1 justify-end gap-8">
-        <div className="flex items-center gap-9">
+        <div className="flex items-center gap-4">
           { mapping.map((item, index) => (
-            <Atag key={index} tag={item.children ? 'div' : 'a'} className="text-[#111418] text-sm font-medium leading-normal flex items-center gap-2 relative" href={item.path} onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => Object.keys(openMenu).length < 1 && handleMenuClick(e, item, index)}>{item.metadata.title}
+            <Atag key={index} tag={item.children ? 'div' : 'a'} className={`text-[#111418] text-sm font-medium leading-normal flex items-center gap-2 relative p-2 rounded-lg ${item?.metadata?.class || ''}`} href={item.path} onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => Object.keys(openMenu).length < 1 && handleMenuClick(e, item, index)}>{item.metadata.title}
               { item.children && (
                 <>
                   <ChevronDownIcon
@@ -83,7 +79,7 @@ export default function Header() {
             </Atag>
           ))}
         </div>
-        <div className="flex gap-2">
+        {/* <div className="flex gap-2">
           <button
             className="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 bg-[#f0f2f4] text-[#111418] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5"
           >
@@ -122,7 +118,7 @@ export default function Header() {
           className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
           style={{ backgroundImage: `url("https://cdn.usegalileo.ai/stability/d8375e4c-28e0-4b2d-89fe-50874d073c66.png")` }}
         >
-        </div>
+        </div> */}
       </div>
     </header>
   );
