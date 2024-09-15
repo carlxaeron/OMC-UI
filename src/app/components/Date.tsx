@@ -3,6 +3,7 @@ import { useState } from "react";
 import { formatDate } from "date-fns";
 import { DayPicker } from "react-day-picker";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
+import Datepicker from "react-tailwindcss-datepicker";
 
 export default function Date(props: any) {
   const [date, setDate] = useState<Date>();
@@ -14,7 +15,7 @@ export default function Date(props: any) {
 
   return (
     <>
-      <Popover placement="bottom">
+      {/* <Popover placement="bottom">
         <PopoverHandler>
           <Input
             className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border !border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
@@ -63,7 +64,13 @@ export default function Date(props: any) {
             }}
           />
         </PopoverContent>
-      </Popover>
+      </Popover> */}
+      <Datepicker
+        asSingle={true}
+        value={date} 
+        useRange={false}
+        onChange={newValue => handleDateChange(newValue)}
+      />
     </> 
   )
 }

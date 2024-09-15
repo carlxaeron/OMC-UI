@@ -43,7 +43,7 @@ export default function Header() {
 
   return (
     <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f4] px-4 py-3">
-      <div className="flex items-center gap-4 text-[#111418]">
+      <div onClick={() => router.push('/')} className="flex items-center gap-4 text-[#111418] cursor-pointer">
         <div className="size-4">
           <DefaultIcon />
         </div>

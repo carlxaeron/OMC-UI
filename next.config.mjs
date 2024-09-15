@@ -6,6 +6,8 @@ const nextConfig = {
     typescript: {
         ignoreBuildErrors: true, // TODO: investigate the errors and remove this
     },
+    output: "export",
+    trailingSlash: true,
 };
 
 export default nextConfig;

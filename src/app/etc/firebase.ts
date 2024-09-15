@@ -1,3 +1,6 @@
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+
 const Firebase = {
   API: 'https://apicenter--api-center-6acf0.us-central1.hosted.app/'
 };
@@ -15,4 +18,9 @@ const firebaseConfig = {
 
 export default Firebase;
 
-export { firebaseConfig, Firebase };
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+// const analytics = getAnalytics(app);
+const db = getFirestore(app);
+
+export { firebaseConfig, Firebase, app, db };
