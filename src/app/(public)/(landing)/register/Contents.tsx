@@ -2,10 +2,16 @@
 
 import Date from "@/app/components/Date";
 import { Button, Alert } from "@material-tailwind/react";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, use, useContext, useEffect, useState } from "react";
 import ThankYouPage from "./ThankYou";
+import { firebaseConfig } from "@/app/etc/firebase";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { initializeApp } from "firebase/app";
+import { Context } from "@/app/context/provider";
+import { set } from "date-fns";
 
 export default function Contents() {
+  const ctx:any = useContext(Context);
 
   const defaultValues = {
     date: "",
@@ -13,6 +19,8 @@ export default function Contents() {
 
   const [form, setForm] = useState(defaultValues);
   const [success, setSuccess] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const validate = () => {
     if (!form.first_name) {
@@ -23,6 +31,9 @@ export default function Contents() {
     }
     if (!form.email) {
       return "Email is required";
+    }
+    if (!form.password) {
+      return "Password is required";
     }
     if (!form.date) {
       return "Date of birth is required";
@@ -54,12 +65,30 @@ export default function Contents() {
   const submitForm = (e) => {
     e.preventDefault();
     if (validate()) return;
-    setSuccess(true);
+    if(ctx?.state?.firebase) {
+      setIsLoading(true);
+      const auth = getAuth(ctx.state.firebase);
+      createUserWithEmailAndPassword(auth, form.email, form.password)
+        .then((resp) => {
+          console.log(resp);
+          setSuccess(true);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setErrMsg('Error creating account. Please try again later. Or check the email and password you entered.');
+          setTimeout(() => {
+            setErrMsg('');
+          }, 5000);
+          setIsLoading(false);
+        });
+    }
   }
 
   return success ? <ThankYouPage /> : (
     <>
-      {dirty() && validate() && <Alert color="red">{validate()}</Alert>}
+      {(dirty() && validate()) && <Alert color="red">{validate()}</Alert>}
+      {errMsg && <Alert color="red">{errMsg}</Alert>}
       <div className="md:px-40 flex flex-1 justify-center py-5">
         <div className="layout-content-container flex flex-col md:max-w-[512px] py-5 flex-1">
           <h1 className="text-[#111418] tracking-light text-[32px] font-bold leading-tight px-4 text-center pb-3 pt-6">Create an account</h1>
@@ -71,6 +100,7 @@ export default function Contents() {
                 className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
                 defaultValue={form?.first_name}
                 onChange={e => handleInput("first_name", e)}
+                disabled={isLoading}
               />
             </label>
           </div>
@@ -82,6 +112,7 @@ export default function Contents() {
                 className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
                 defaultValue={form?.last_name}
                 onChange={e => handleInput("last_name", e)}
+                disabled={isLoading}
               />
             </label>
           </div>
@@ -94,6 +125,20 @@ export default function Contents() {
                 defaultValue={form?.email}
                 onChange={e => handleInput("email", e)}
                 type="email"
+                disabled={isLoading}
+              />
+            </label>
+          </div>
+          <div className="flex md:max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <label className="flex flex-col min-w-40 flex-1">
+              <p className="text-[#111418] text-base font-medium leading-normal pb-2">Password</p>
+              <input
+                placeholder="Enter password"
+                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
+                defaultValue={form?.password}
+                onChange={e => handleInput("password", e)}
+                type="password"
+                disabled={isLoading}
               />
             </label>
           </div>
