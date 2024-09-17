@@ -1,125 +1,47 @@
 'use client';
 
-import { Card, CardBody } from "@material-tailwind/react";
-import { mapping } from "./mapping";
-import {
-  ChevronDownIcon,
-} from "@heroicons/react/24/outline";
 import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DefaultIcon } from "@/app/components/FontIcon";
 import { Context } from "@/app/context/provider";
+import MenuComponent from "./MenuComponent"; // Import the Menu component correctly
+import { Button } from "react-day-picker";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
+
+export function Logo() {
+  const router = useRouter();
+
+  return (
+    <div className="flex items-center gap-4 text-[#111418] cursor-pointer">
+      <div onClick={() => router.push('/')} className="size-4">
+        <DefaultIcon />
+      </div>
+      <h2 onClick={() => router.push('/')} className="text-[#111418] text-lg font-bold leading-tight tracking-[-0.015em]">{process.env.NEXT_PUBLIC_TITLE}</h2>
+    </div>
+  );
+}
 
 export default function Header() {
   const router = useRouter();
   const ctx = useContext(Context);
 
-  const [openMenu, setOpenMenu]:[any, any] = useState({});
-
-  useEffect(() => {
-    if(ctx?.isLoggedIn()) {
-      console.log(ctx);
-    }
-  }, []);
-
-  const isOpen = (index:number) => openMenu[`menu-${index}`]?.open === true;
-  const handleMenuClick = (event:React.MouseEvent<HTMLAnchorElement>, data:any, i:number) => {
-    if(!data?.children) return;
-    else {
-      event.preventDefault();
-      // event.stopPropagation();
-      setOpenMenu({[`menu-${i}`]: { open: openMenu[`menu-${i}`]?.open !== true }});
-    }
-  }
-
-  const Atag = (props:any) => {
-    const { children, ...rest } = props;
-    if(props.tag === 'div') {
-      rest.className = `${rest.className} cursor-pointer`;
-    }
-    // if(!props.onClick) {
-    //   debugger;
-    //   rest.onClick = (e:React.MouseEvent<HTMLAnchorElement>) => {
-    //     e.preventDefault();
-    //     router.push(props.href);
-    //     debugger;
-    //   }
-    // } else debugger;
-    return React.createElement(props.tag, rest, children);
-  }
-
-  const handleRedirect = (event:React.MouseEvent<HTMLAnchorElement>, data: { path: string }) => {
-    event.preventDefault();
-    const href = data.path;
-    if (href) {
-      router.push(href);
-    }
-    setOpenMenu({});
-  };
-
-  const linkBlank = (item:any) => {
-    if(item.metadata.loggedIn === false && ctx?.isLoggedIn()) {
-      return true;
-    } else if(item.metadata.loggedIn === true && !ctx?.isLoggedIn()) {
-      return true;
-    }
-  }
-
   return (
-    <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f4] px-4 py-3">
-      <div onClick={() => router.push('/')} className="flex items-center gap-4 text-[#111418] cursor-pointer">
-        <div className="size-4">
-          <DefaultIcon />
-        </div>
-        <h2 className="text-[#111418] text-lg font-bold leading-tight tracking-[-0.015em]">{process.env.NEXT_PUBLIC_TITLE}</h2>
+    <header className="flex md:flex-row flex-col md:relative sticky top-0 left-0 bg-white z-50 items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f4] px-4 py-3">
+      <div>
+        <Button className="absolute top-0 left-4 bottom-0 cursor-pointer md:hidden"
+          onClick={e => {
+            e.preventDefault();
+            ctx?.toggleLandingMenu();
+          }}
+        >
+          <FontAwesomeIcon icon={faBars} />
+        </Button>
+        <Logo /> 
       </div>
       <div className="flex flex-1 justify-end gap-8">
         <div className="flex items-center gap-4">
-          { mapping.map((item, index) => linkBlank(item) ? <React.Fragment key={index}></React.Fragment> : (
-            <Atag key={index} tag={item.children ? 'div' : 'a'} 
-              className={`text-[#111418] text-sm font-medium leading-normal flex items-center gap-2 relative p-2 rounded-lg ${item?.metadata?.class || ''}`} 
-              href={item.path} 
-              onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => 
-                {
-                  e.preventDefault();
-
-                  if(Object.keys(openMenu).length < 1){
-                    handleMenuClick(e, item, index);
-                  }
-                  if(item.metadata.title === 'Logout') {
-                    ctx?.logout();
-                  }
-                  else {
-                    router.push(item.path);
-                  }
-                }
-              }
-            >{item.metadata.title}
-              { item.children && (
-                <>
-                  <ChevronDownIcon
-                    strokeWidth={2.5}
-                    className={`hidden h-3 w-3 transition-transform lg:block ${
-                      isOpen(index) !== true ? "rotate-180" : ""
-                    }`}
-                  />
-                  { isOpen(index) === true && (
-                    <Card className="absolute top-0 right-0 top-full">
-                      <CardBody>
-                        <ul>
-                          { item.children.map((child, index2) => (
-                            <li key={index2}>
-                              <a href={child.path} onClick={e => handleRedirect(e, child)}>{child.metadata.title}</a>
-                            </li>
-                          )) }
-                        </ul>
-                      </CardBody>
-                    </Card>
-                  ) }
-                </>
-              ) }
-            </Atag>
-          ))}
+          <MenuComponent /> {/* Use the Menu component correctly */}
           { ctx?.isLoggedIn() && (
             <h3 className="text-[#111418] text-lg font-bold leading-normal">Hi {ctx?.state?.userData?.first_name} {ctx?.state?.userData?.last_name}</h3>
           ) }

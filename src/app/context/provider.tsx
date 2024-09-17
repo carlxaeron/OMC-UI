@@ -5,28 +5,25 @@ import React, { createContext, useEffect, useState } from "react";
 import { app, db, findUserByUid } from "../etc/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import { set } from "date-fns";
 
 export const Context = createContext({});
 
 export default function Provider(props: { children: any; data: any; }) {
-    const [state, setState2] = useState({});
+    const [state, setState2] = useState({
+        userCredential: null,
+        userData: null,
+        homeMenuOpen: false,
+        landingMenuOpen: false,
+        isMobile: false,
+        firebase: {
+            app,
+            db,
+        }
+    });
     const router = useRouter();
 
     const setState = (newState:any) => {
-        // if (newState?.userCredential) {
-        // //     console.log("User signed in:", newState.userCredential.user);
-        // //     localStorage.setItem("userCredential", JSON.stringify(newState.userCredential));
-
-        //     findUserByUid(newState.userCredential.user.uid).then((userData) => {
-        // //         localStorage.setItem("userData", JSON.stringify(userData));
-        //         setState2({
-        //             ...state,
-        //             userData,
-        //         });
-        //     }).catch((e) => { console.error(e); });
-
-        // }
-        
         setState2({
             ...state,
             ...newState,
@@ -34,13 +31,6 @@ export default function Provider(props: { children: any; data: any; }) {
     }
 
     useEffect(() => {
-        setState({
-            firebase: {
-                app,
-                db,
-            }
-        });
-
         // if (localStorage.getItem("userCredential")) {
         //     setState({
         //         userCredential: JSON.parse(localStorage.getItem("userCredential") || "{}"),
@@ -51,6 +41,20 @@ export default function Provider(props: { children: any; data: any; }) {
         //         userData: JSON.parse(localStorage.getItem("userData") || "{}"),
         //     });
         // }
+
+        const handleResize = () => {
+            setState({
+                ...state,
+                isMobile: window.innerWidth <= 768,
+            });
+        };
+
+        window.addEventListener("resize", handleResize);
+        handleResize();
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
     }, []);
 
     useEffect(() => {
@@ -78,15 +82,27 @@ export default function Provider(props: { children: any; data: any; }) {
         router.push('/');
     }
 
-    
+    const toggleHomeMenu = (open = undefined) => {
+        setState({
+            homeMenuOpen: open !== undefined ? open : !state.homeMenuOpen,
+        });
+    }    
+    const toggleLandingMenu = (open = undefined) => {
+        setState({
+            landingMenuOpen: open !== undefined ? open : !state.landingMenuOpen,
+        });
+    }    
 
     return (
         <Context.Provider value={{
             ...props.data,
+            ...state,
             state,
             setState,
             isLoggedIn,
             logout,
+            toggleHomeMenu,
+            toggleLandingMenu,
         }}>
             <ThemeProvider>
                 {props.children}
