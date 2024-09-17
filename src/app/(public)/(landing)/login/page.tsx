@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Contents from "./Contents";
 
 export const metadata: Metadata = {
-  title: "Register",
+  title: "Login",
   // description: "Welcome to " + process.env.NEXT_PUBLIC_TITLE,
 };
 

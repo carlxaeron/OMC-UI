@@ -5,14 +5,22 @@ import { mapping } from "./mapping";
 import {
   ChevronDownIcon,
 } from "@heroicons/react/24/outline";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DefaultIcon } from "@/app/components/FontIcon";
+import { Context } from "@/app/context/provider";
 
 export default function Header() {
   const router = useRouter();
+  const ctx = useContext(Context);
 
   const [openMenu, setOpenMenu]:[any, any] = useState({});
+
+  useEffect(() => {
+    if(ctx?.isLoggedIn()) {
+      console.log(ctx);
+    }
+  }, []);
 
   const isOpen = (index:number) => openMenu[`menu-${index}`]?.open === true;
   const handleMenuClick = (event:React.MouseEvent<HTMLAnchorElement>, data:any, i:number) => {
@@ -29,6 +37,14 @@ export default function Header() {
     if(props.tag === 'div') {
       rest.className = `${rest.className} cursor-pointer`;
     }
+    // if(!props.onClick) {
+    //   debugger;
+    //   rest.onClick = (e:React.MouseEvent<HTMLAnchorElement>) => {
+    //     e.preventDefault();
+    //     router.push(props.href);
+    //     debugger;
+    //   }
+    // } else debugger;
     return React.createElement(props.tag, rest, children);
   }
 
@@ -41,6 +57,14 @@ export default function Header() {
     setOpenMenu({});
   };
 
+  const linkBlank = (item:any) => {
+    if(item.metadata.loggedIn === false && ctx?.isLoggedIn()) {
+      return true;
+    } else if(item.metadata.loggedIn === true && !ctx?.isLoggedIn()) {
+      return true;
+    }
+  }
+
   return (
     <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f4] px-4 py-3">
       <div onClick={() => router.push('/')} className="flex items-center gap-4 text-[#111418] cursor-pointer">
@@ -51,8 +75,26 @@ export default function Header() {
       </div>
       <div className="flex flex-1 justify-end gap-8">
         <div className="flex items-center gap-4">
-          { mapping.map((item, index) => (
-            <Atag key={index} tag={item.children ? 'div' : 'a'} className={`text-[#111418] text-sm font-medium leading-normal flex items-center gap-2 relative p-2 rounded-lg ${item?.metadata?.class || ''}`} href={item.path} onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => Object.keys(openMenu).length < 1 && handleMenuClick(e, item, index)}>{item.metadata.title}
+          { mapping.map((item, index) => linkBlank(item) ? <React.Fragment key={index}></React.Fragment> : (
+            <Atag key={index} tag={item.children ? 'div' : 'a'} 
+              className={`text-[#111418] text-sm font-medium leading-normal flex items-center gap-2 relative p-2 rounded-lg ${item?.metadata?.class || ''}`} 
+              href={item.path} 
+              onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => 
+                {
+                  e.preventDefault();
+
+                  if(Object.keys(openMenu).length < 1){
+                    handleMenuClick(e, item, index);
+                  }
+                  if(item.metadata.title === 'Logout') {
+                    ctx?.logout();
+                  }
+                  else {
+                    router.push(item.path);
+                  }
+                }
+              }
+            >{item.metadata.title}
               { item.children && (
                 <>
                   <ChevronDownIcon
@@ -78,6 +120,9 @@ export default function Header() {
               ) }
             </Atag>
           ))}
+          { ctx?.isLoggedIn() && (
+            <h3 className="text-[#111418] text-lg font-bold leading-normal">Hi {ctx?.state?.userData?.first_name} {ctx?.state?.userData?.last_name}</h3>
+          ) }
         </div>
         {/* <div className="flex gap-2">
           <button

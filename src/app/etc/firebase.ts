@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { collection, getDocs, getFirestore, query, where } from "firebase/firestore";
 
-const Firebase = {
+export const Firebase = {
   API: 'https://apicenter--api-center-6acf0.us-central1.hosted.app/'
 };
 
@@ -18,9 +18,20 @@ const firebaseConfig = {
 
 export default Firebase;
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
-const db = getFirestore(app);
+export const findUserByUid = async (uid: string) => {
+  const userCollection = collection(db, "user_data");
+  const q = query(userCollection, where("uid", "==", uid));
+  const querySnapshot = await getDocs(q);
 
-export { firebaseConfig, Firebase, app, db };
+  if (!querySnapshot.empty) {
+      const userData = querySnapshot.docs[0].data();
+      return userData;
+  } else {
+      return null;
+  }
+}
+
+// Initialize Firebase
+export const app = initializeApp(firebaseConfig);
+// const analytics = getAnalytics(app);
+export const db = getFirestore(app);

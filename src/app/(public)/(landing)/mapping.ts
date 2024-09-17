@@ -7,11 +7,30 @@ export const mapping = [
     }
   },
   {
+    "path": "#",
+    "metadata": {
+      "title": "Logout",
+      "description": "",
+      "class": "bg-[#0d80f2] text-white",
+      "loggedIn": true,
+    },
+  },
+  {
+    "path": "/login",
+    "metadata": {
+      "title": "Login",
+      "description": "Welcome to the Home page",
+      "class": "bg-[#0d80f2] text-white",
+      "loggedIn": false
+    }
+  },
+  {
     "path": "/register",
     "metadata": {
       "title": "Signup",
       "description": "Welcome to the Home page",
       "class": "bg-[#0d80f2] text-white",
+      "loggedIn": false
     }
   },
   // {
