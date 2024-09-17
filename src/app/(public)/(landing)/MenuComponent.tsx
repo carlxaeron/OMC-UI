@@ -5,7 +5,7 @@ import { Card, CardBody } from "@material-tailwind/react";
 import { useRouter } from "next/navigation";
 import React, { use, useContext, useState } from "react";
 import { mapping } from "./mapping";
-import { Context } from "@/app/context/provider";
+import { Context, ProviderValue } from "@/app/context/provider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { Logo } from "./Header";
@@ -15,7 +15,7 @@ export default function MenuComponent(props:any) {
   const isAside= props.type === 'aside';
   const isHeader= !props.type;
 
-  const ctx = useContext(Context);
+  const ctx:ProviderValue = useContext(Context);
   const [openMenu, setOpenMenu]:[any, any] = useState({});
   const router = useRouter();
 
@@ -119,5 +119,8 @@ export default function MenuComponent(props:any) {
         <ReturnHtml />
       </div>
     </div>
+      { ctx?.isLoggedIn() && (
+        <h3 className="text-[#111418] text-lg font-bold leading-normal sticky bottom-0 left-0 text-center my-4">Hi {ctx?.state?.userData?.first_name} {ctx?.state?.userData?.last_name}</h3>
+      ) }
   </aside> : <ReturnHtml />;
 }

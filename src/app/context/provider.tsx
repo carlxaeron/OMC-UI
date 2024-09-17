@@ -6,6 +6,7 @@ import { app, db, findUserByUid } from "../etc/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { set } from "date-fns";
+import { CheckRegister } from "../(public)/(landing)/register/Contents";
 
 export const Context = createContext({});
 
@@ -19,7 +20,8 @@ export default function Provider(props: { children: any; data: any; }) {
         firebase: {
             app,
             db,
-        }
+        },
+        registerStep: 0,
     });
     const router = useRouter();
 
@@ -42,15 +44,17 @@ export default function Provider(props: { children: any; data: any; }) {
         //     });
         // }
 
+        // SIZING
         const handleResize = () => {
             setState({
-                ...state,
                 isMobile: window.innerWidth <= 768,
             });
         };
-
         window.addEventListener("resize", handleResize);
         handleResize();
+
+        // REGISTER
+        CheckRegister(VALUE);
 
         return () => {
             window.removeEventListener("resize", handleResize);
@@ -60,6 +64,7 @@ export default function Provider(props: { children: any; data: any; }) {
     useEffect(() => {
         if (state?.userCredential) {
             findUserByUid(state?.userCredential.user.uid).then((userData) => {
+                console.log(userData, 'userDatainfind');
         //         localStorage.setItem("userData", JSON.stringify(userData));
                 setState2({
                     ...state,
@@ -91,22 +96,42 @@ export default function Provider(props: { children: any; data: any; }) {
         setState({
             landingMenuOpen: open !== undefined ? open : !state.landingMenuOpen,
         });
-    }    
+    }
+
+    const VALUE = {
+        ...props.data,
+        ...state,
+        state,
+        setState,
+        isLoggedIn,
+        logout,
+        toggleHomeMenu,
+        toggleLandingMenu,
+        setRegisterStep: (step:number) => setState2({...state, registerStep: step})
+    }
 
     return (
-        <Context.Provider value={{
-            ...props.data,
-            ...state,
-            state,
-            setState,
-            isLoggedIn,
-            logout,
-            toggleHomeMenu,
-            toggleLandingMenu,
-        }}>
+        <Context.Provider value={VALUE}>
             <ThemeProvider>
                 {props.children}
             </ThemeProvider>
         </Context.Provider>
     )
 }
+
+export type ProviderValue = {
+    userCredential: any;
+    userData: any;
+    homeMenuOpen: boolean;
+    landingMenuOpen: boolean;
+    isMobile: boolean;
+    firebase: {
+        app: any;
+        db: any;
+    };
+    setState: (newState: any) => void;
+    isLoggedIn: () => boolean;
+    logout: () => void;
+    toggleHomeMenu: (open?: boolean) => void;
+    toggleLandingMenu: (open?: boolean) => void;
+} | {} | undefined;

@@ -3,7 +3,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DefaultIcon } from "@/app/components/FontIcon";
-import { Context } from "@/app/context/provider";
+import { Context, ProviderValue } from "@/app/context/provider";
 import MenuComponent from "./MenuComponent"; // Import the Menu component correctly
 import { Button } from "react-day-picker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -24,7 +24,7 @@ export function Logo() {
 
 export default function Header() {
   const router = useRouter();
-  const ctx = useContext(Context);
+  const ctx:ProviderValue = useContext(Context);
 
   return (
     <header className="flex md:flex-row flex-col md:relative sticky top-0 left-0 bg-white z-50 items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f4] px-4 py-3">
@@ -43,7 +43,7 @@ export default function Header() {
         <div className="flex items-center gap-4">
           <MenuComponent /> {/* Use the Menu component correctly */}
           { ctx?.isLoggedIn() && (
-            <h3 className="text-[#111418] text-lg font-bold leading-normal">Hi {ctx?.state?.userData?.first_name} {ctx?.state?.userData?.last_name}</h3>
+            <h3 className="text-[#111418] text-lg font-bold leading-normal md:block hidden">Hi {ctx?.state?.userData?.first_name} {ctx?.state?.userData?.last_name}</h3>
           ) }
         </div>
         {/* <div className="flex gap-2">

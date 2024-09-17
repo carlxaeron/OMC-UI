@@ -40,10 +40,8 @@ export default function Contents() {
     e.preventDefault();
     setIsLoading(true);
     const fbApp = ctx?.state?.firebase?.app;
-    console.log(ctx);
     if (fbApp) {
       const auth = getAuth(fbApp);
-      console.log((auth, form.email, form.password));
       signInWithEmailAndPassword(auth, form.email, form.password)
         .then((userCredential) => {
           console.log("User signed in:", userCredential.user);
