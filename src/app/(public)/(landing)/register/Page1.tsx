@@ -52,7 +52,8 @@ export default function Page1(props:pageDataTypes) {
     date: "",
   }
 
-  const [form, setForm] = useState(defaultValues);
+  const form = props.cform;
+  const setForm = props.setCform;
 
   const validate = () => {
     if (!form.first_name) {

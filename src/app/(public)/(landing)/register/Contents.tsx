@@ -37,6 +37,8 @@ export default function Contents() {
     setIsLoading,
     errMsg,
     setErrMsg,
+    cform,
+    setCform,
   }
   return (
     <>
