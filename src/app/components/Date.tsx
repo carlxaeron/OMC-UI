@@ -1,5 +1,7 @@
+'use client';
+
 import { Input, Popover, PopoverContent, PopoverHandler } from "@material-tailwind/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatDate } from "date-fns";
 import { DateRange, DayPicker } from "react-day-picker";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
@@ -12,6 +14,10 @@ export default function Date(props: any) {
     props.onChange(date);
     setDate(date);
   }
+
+  useEffect(() => {
+    setDate(props.value || false);
+  }, []);
 
   return (
     <>
@@ -70,6 +76,7 @@ export default function Date(props: any) {
         value={date} 
         useRange={false}
         onChange={newValue => handleDateChange(newValue)}
+        disabled={props.disabled}
       />
     </> 
   )

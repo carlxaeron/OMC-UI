@@ -45,7 +45,6 @@ export default function Contents() {
       const auth = getAuth(fbApp);
       signInWithEmailAndPassword(auth, form.email, form.password)
         .then((userCredential) => {
-          console.log("User signed in:", userCredential.user);
           setIsLoading(false);
           router.push("/home");
           ctx?.setState({

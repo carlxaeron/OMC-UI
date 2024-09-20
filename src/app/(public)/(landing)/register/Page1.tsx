@@ -3,50 +3,54 @@
 import Date from "@/app/components/Date";
 import { Button, Alert } from "@material-tailwind/react";
 import { ChangeEvent, use, useContext, useEffect, useState } from "react";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { Context } from "@/app/context/provider";
 import { addDoc, collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { CheckRegister, Container, pageDataTypes, Title } from "./Contents";
 import { parse } from "path";
 import { findUserByUid, parseFirebaseError } from "@/app/etc/firebase";
+import { useRouter } from "next/navigation";
 
 export default function Page1(props:pageDataTypes) {
-  useEffect(() => {
-    if(ctx?.isLoggedIn()) {
-      if(!ctx?.userData) {
-        setForm({
-          ...form,
-          email: ctx?.userCredential?.user?.email,
-        });
-      } else {
-        setForm({
-          ...form,
-          email: ctx?.userData?.email,
-          first_name: ctx?.userData?.first_name,
-          last_name: ctx?.userData?.last_name,
-          gender: ctx?.userData?.gender,
-        });
-      }
-    } else {
-      if(ctx?.landingEmail) {
-        setForm({
-          ...form,
-          email: ctx?.landingEmail,
-        });
-        ctx?.setState({
-          landingEmail: '',
-        });
-      }
-    }
+  // useEffect(() => {
+  //   if(ctx?.isLoggedIn()) {
+  //     if(!ctx?.userData) {
+  //       setForm({
+  //         ...form,
+  //         email: ctx?.userCredential?.user?.email,
+  //       });
+  //     } else {
+  //       setForm({
+  //         ...form,
+  //         email: ctx?.userData?.email,
+  //         first_name: ctx?.userData?.first_name,
+  //         last_name: ctx?.userData?.last_name,
+  //         gender: ctx?.userData?.gender,
+  //       });
+  //     }
+  //   } else {
+  //     if(ctx?.landingEmail) {
+  //       setForm({
+  //         ...form,
+  //         email: ctx?.landingEmail,
+  //       });
+  //       ctx?.setState({
+  //         landingEmail: '',
+  //       });
+  //     }
+  //   }
 
-    return () => {
-      if(ctx?.landingEmail) ctx?.setState({
-        landingEmail: '',
-      })
-    }
-  }, []);
+  //   return () => {
+  //     if(ctx?.landingEmail) ctx?.setState({
+  //       landingEmail: '',
+  //     })
+  //   }
+  // }, []);
 
-  const { setIsLoading, isLoading, ctx, setErrMsg, tempData, setTempData } = props;
+  const router = useRouter();
+  
+  const { setIsLoading, isLoading, ctx, setErrMsg } = props;
+  const [newRegister, setNewRegister] = useState(false);
 
   const defaultValues = {
     date: "",
@@ -56,6 +60,7 @@ export default function Page1(props:pageDataTypes) {
   const setForm = props.setCform;
 
   const validate = () => {
+    const dateCheck = form.date && form.date.startDate && form.date.endDate;
     if (!form.first_name) {
       return "First name is required";
     }
@@ -66,7 +71,7 @@ export default function Page1(props:pageDataTypes) {
       return "Gender is required";
     }
     if (!ctx?.isLoggedIn()) {
-      if (!form.date) {
+      if (!dateCheck) {
         return "Date of birth is required";
       }
       if (!form.email) {
@@ -80,6 +85,10 @@ export default function Page1(props:pageDataTypes) {
       }
       if (form.rpassword !== form.password) {
         return "Repeat password is not matched with Password";
+      }
+    } else {
+      if (!dateCheck) {
+        return "Date of birth is required";
       }
     }
     return "";
@@ -104,6 +113,13 @@ export default function Page1(props:pageDataTypes) {
     });
   }
 
+  useEffect(() => {
+    if(ctx?.isLoggedIn() && newRegister) {
+      setNewRegister(false);
+      submit.userData(ctx?.userCredential?.user?.uid, { newRegister: true });
+    }
+  }, [ctx?.userCredential, newRegister]);
+
   const submit = {
     account: () => {
       setIsLoading(true);
@@ -112,27 +128,24 @@ export default function Page1(props:pageDataTypes) {
       const auth = getAuth(fbApp);
       const email = form.email;
       createUserWithEmailAndPassword(auth, email, form.password)
-        .then((resp) => {
-          submit.userData(resp.user.uid)
-          
-          ctx?.setState({
-            userCredential: resp,
-          });
-          tempData({
-            userCredential: resp,
+        .then(() => {
+          signInWithEmailAndPassword(auth, email, form.password)
+          .then((resp) => {
+            ctx?.setState({
+              userCredential: resp,
+            });
+            setNewRegister(true);
+          })
+          .catch((e) => {
+            setErrMsg(parseFirebaseError(e));
           });
         })
         .catch((error) => {
-          window.scrollTo(0, 0);
           setErrMsg(parseFirebaseError(error));
-          setTimeout(() => {
-            props.setErrMsg('');
-          }, 5000);
-          setIsLoading(false);
         });
     },
-    userData: (uid:any) => {
-      setIsLoading(true);
+    userData: (uid:any, conf:any = {}) => {
+      // setIsLoading(true);
 
       const fbDb = ctx?.state?.firebase?.db;
 
@@ -140,36 +153,29 @@ export default function Page1(props:pageDataTypes) {
         uid,
         first_name: form.first_name || '',
         last_name: form.last_name || '',
-        email: form.email,
         date: form?.date?.startDate || '', // Provide a default value if undefined
         gender: form.gender || '',
       };
 
       const userDocRef = collection(fbDb, `user_data`);
-
       addDoc(userDocRef, userData)
       .then((resp2:any) => {
         setIsLoading(false);
-        const td = tempData;
-        debugger;
-        findUserByUid(uid).then((userData) => {
+        ctx?.setRegisterStep(1);
+        if(!conf?.newRegister) {
+          console.log('resp2', resp2);
           ctx?.setState({
-            userData,
-          });
-          ctx?.setRegisterStep(1);
-        }).catch((e) => { 
-            setErrMsg(parseFirebaseError(e));
-        });
+            userData: {
+              id: resp2.id,
+              date: form?.date,
+              ...userData,
+            },
+          })
+        }
       })
       .catch((error2:any) => {
-        window.scrollTo(0, 0);
         setErrMsg(parseFirebaseError(error2));
-        setTimeout(() => {
-          setErrMsg('');
-        }, 5000);
-        setIsLoading(false);
       });
-
     },
   }
 
@@ -267,19 +273,17 @@ export default function Page1(props:pageDataTypes) {
               </div>
             </>
           ) }
-          { (!ctx?.isLoggedIn() || noUserData) && (
-            <div className="flex flex-wrap items-end gap-4 px-4 py-3">
-              <label className="flex flex-col min-w-40 flex-1">
-                <p className="text-[#111418] text-base font-medium leading-normal pb-2">Date of Birth</p>
-                {/* <input
-                  placeholder="MM/DD/YYYY"
-                  className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
-                  value=""
-                /> */}
-                <Date value={form?.date} onChange={handleDateChange} />
-              </label>
-            </div>
-          ) }
+          <div className="flex flex-wrap items-end gap-4 px-4 py-3">
+            <label className="flex flex-col min-w-40 flex-1">
+              <p className="text-[#111418] text-base font-medium leading-normal pb-2">Date of Birth</p>
+              {/* <input
+                placeholder="MM/DD/YYYY"
+                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
+                value=""
+              /> */}
+              <Date disabled={isLoading || (ctx?.isLoggedIn() && !noUserData)} value={form?.date} onChange={handleDateChange} />
+            </label>
+          </div>
           <div className="flex flex-wrap gap-3 p-4 justify-center">
             <label
               className="text-sm font-medium leading-normal flex items-center justify-center rounded-xl border border-[#dce0e5] px-4 h-11 text-[#111418] has-[:checked]:border-[3px] has-[:checked]:px-3.5 has-[:checked]:border-[#1980e6] relative cursor-pointer"
@@ -326,7 +330,7 @@ export default function Page1(props:pageDataTypes) {
               <Button loading={isLoading} type="submit" color="blue" className="w-full" disabled={dirty() && validate()}>Create Account</Button>
             ) }
             { noUserData && (
-              <Button loading={isLoading} type="submit" color="blue" className="w-full" disabled={dirty() && validate()}>Submit</Button>
+              <Button loading={isLoading} type="submit" color="blue" className="w-full" disabled={validate()}>Submit</Button>
             ) }
             { ctx?.isLoggedIn() && !noUserData && (
               <Button onClick={e => {

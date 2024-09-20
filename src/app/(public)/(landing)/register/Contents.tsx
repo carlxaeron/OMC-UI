@@ -23,11 +23,65 @@ export default function Contents() {
   const ctx = useContext(Context);
   const [isLoading, setIsLoading] = useState(false);
   const [errMsg, setErrMsg] = useState('');
-  const [cform, setCform] = useState({});
+  const [step, setStep] = useState(0);
+  const [cform, setCform] = useState({
+    email: '',
+    password: '',
+    rpassword: '',
+    first_name: '',
+    last_name: '',
+    gender: '',
+    country: '',
+    date: {
+      "startDate": new Date().toISOString(),
+      "endDate": new Date().toISOString()
+    },
+    
+  });
+
+  if(process.env.NODE_ENV !== 'production') useEffect(() => {
+    console.log('cform', cform);
+  }, [cform])
 
   useEffect(() => {
-    CheckRegister(ctx);
-  }, [])
+    if(ctx?.isLoggedIn()) {
+      if(!ctx?.userData) {
+        setCform({
+          ...cform,
+          email: ctx?.userCredential?.user?.email || '',
+        })
+      } else {
+        console.log('ctx?.userData', ctx?.userData?.date);
+        debugger;
+        setCform({
+          ...cform,
+          email: ctx?.userCredential?.user?.email || '',
+          first_name: ctx?.userData?.first_name || '',
+          last_name: ctx?.userData?.last_name || '',
+          gender: ctx?.userData?.gender || '',
+          date: {
+            "startDate": ctx?.userData?.date || new Date().toISOString(),
+            "endDate": ctx?.userData?.date || new Date().toISOString(),
+          }
+        });
+      }
+      setStep(ctx?.registerStep);
+    }
+  }, [ctx?.userData])
+
+  useEffect(() => {
+    if(errMsg) {
+      console.log('errMsg', errMsg);
+      window.scrollTo(0, 0);
+      setTimeout(() => {
+        setErrMsg('');
+      }, 5000);
+      setIsLoading(false);
+    }
+    // if(ctx?.registerStep !== step) {
+    //   CheckRegister(ctx);
+    // }
+  }, [errMsg])
 
   const pageData = {
     success,
@@ -48,9 +102,9 @@ export default function Contents() {
           // isLastStep={(value) => setIsLastStep(value)}
           // isFirstStep={(value) => setIsFirstStep(value)}
         >
-          <Step onClick={() => !success && ctx?.setRegisterStep(0)}>1</Step>
-          <Step onClick={() => !success && ctx?.setRegisterStep(1)}>2</Step>
-          <Step onClick={() => !success && ctx?.setRegisterStep(2)}>3</Step>
+          <Step onClick={() => (ctx?.isLoggedIn()) && !success && ctx?.setRegisterStep(0)}>1</Step>
+          <Step onClick={() => (ctx?.isLoggedIn() && ctx?.userData) && !success && ctx?.setRegisterStep(1)}>2</Step>
+          <Step onClick={() => (ctx?.isLoggedIn() && ctx?.userData && ctx?.userdata?.country) && !success && ctx?.setRegisterStep(2)}>3</Step>
         </Stepper>
       </div>
       <div className="py-5">

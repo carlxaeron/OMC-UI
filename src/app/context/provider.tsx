@@ -2,7 +2,7 @@
 
 import { ThemeProvider } from "@material-tailwind/react";
 import React, { createContext, useEffect, useState } from "react";
-import { app, db, findUserByUid } from "../etc/firebase";
+import { app, db, findUserByUid, UserData } from "../etc/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { set } from "date-fns";
@@ -11,7 +11,7 @@ import { CheckRegister } from "../(public)/(landing)/register/Contents";
 export const Context = createContext({});
 
 export default function Provider(props: { children: any; data: any; }) {
-    const [state, setState2] = useState({
+    const defaultState = {
         userCredential: null,
         userData: null,
         homeMenuOpen: false,
@@ -23,14 +23,15 @@ export default function Provider(props: { children: any; data: any; }) {
         },
         registerStep: 0,
         landingEmail: '',
-    });
+    }
+    const [state, setState2] = useState(defaultState);
     const router = useRouter();
 
-    const setState = (newState:any) => {
+    const setState = async (newState:any) => {
         setState2({
             ...state,
             ...newState,
-        });
+        })
     }
 
     useEffect(() => {
@@ -54,9 +55,6 @@ export default function Provider(props: { children: any; data: any; }) {
         window.addEventListener("resize", handleResize);
         handleResize();
 
-        // REGISTER
-        CheckRegister(VALUE);
-
         return () => {
             window.removeEventListener("resize", handleResize);
         };
@@ -65,20 +63,22 @@ export default function Provider(props: { children: any; data: any; }) {
     useEffect(() => {
         if (state?.userCredential) {
             const uid = state?.userCredential?.user?.uid;
-            console.log('uid', uid);
-            findUserByUid(uid).then((userData) => {
-            if (!userData) {
-                router.push('/register');
-            } else {
-                setState2({
-                    ...state,
-                    userData,
-                });
-            }
+            UserData.findUserByUid(uid).then((userData) => {
+                console.log('userData', userData);
+                if (userData) {
+                    setState2({
+                        ...state,
+                        userData,
+                    });
+                }
             }).catch((e) => { console.error(e); });
         }
             
     }, [state?.userCredential]);
+
+    useEffect(() => {
+        if(process.env.NODE_ENV !== 'production') console.log('STATE', state);
+    }, process.env.NODE_ENV !== 'production' ? [state] : []);
 
     const isLoggedIn = () => {
         return !!state?.userCredential;
@@ -86,10 +86,7 @@ export default function Provider(props: { children: any; data: any; }) {
 
     const logout = () => {
         localStorage.removeItem("userCredential");
-        setState({
-            userCredential: null,
-            userData: null,
-        });
+        setState(defaultState);
         router.push('/');
     }
 
@@ -104,6 +101,12 @@ export default function Provider(props: { children: any; data: any; }) {
         });
     }
 
+    const setRegisterStep = (step:number) => {
+        setState({
+            registerStep: step,
+        });
+    }
+
     const VALUE = {
         ...props.data,
         ...state,
@@ -113,7 +116,8 @@ export default function Provider(props: { children: any; data: any; }) {
         logout,
         toggleHomeMenu,
         toggleLandingMenu,
-        setRegisterStep: (step:number) => setState2({...state, registerStep: step})
+        setRegisterStep,
+        setState2,
     }
 
     return (
