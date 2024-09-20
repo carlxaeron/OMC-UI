@@ -39,9 +39,9 @@ export default function Contents() {
     
   });
 
-  if(process.env.NODE_ENV !== 'production') useEffect(() => {
+  useEffect(() => {
     console.log('cform', cform);
-  }, [cform])
+  }, process.env.NODE_ENV !== 'production' ? [cform] : [])
 
   useEffect(() => {
     if(ctx?.isLoggedIn()) {
