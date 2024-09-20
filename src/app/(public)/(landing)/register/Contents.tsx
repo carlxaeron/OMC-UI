@@ -3,7 +3,7 @@
 import { useContext, useEffect, useState } from "react";
 import Page1 from "./Page1";
 import ThankYouPage from "./ThankYou";
-import { Step, Stepper } from "@material-tailwind/react";
+import { Alert, Step, Stepper } from "@material-tailwind/react";
 import { Context, ProviderValue } from "@/app/context/provider";
 import { ReactNode } from "react";
 import Page2 from "./Page2";
@@ -14,12 +14,16 @@ export type pageDataTypes = {
   ctx: ProviderValue,
   isLoading: boolean,
   setIsLoading: any,
+  errMsg: string,
+  setErrMsg: any,
 }
 
 export default function Contents() {
   const [success, setSuccess] = useState(false);
   const ctx = useContext(Context);
   const [isLoading, setIsLoading] = useState(false);
+  const [errMsg, setErrMsg] = useState('');
+  const [cform, setCform] = useState({});
 
   useEffect(() => {
     CheckRegister(ctx);
@@ -31,6 +35,8 @@ export default function Contents() {
     ctx,
     isLoading,
     setIsLoading,
+    errMsg,
+    setErrMsg,
   }
   return (
     <>
@@ -40,18 +46,21 @@ export default function Contents() {
           // isLastStep={(value) => setIsLastStep(value)}
           // isFirstStep={(value) => setIsFirstStep(value)}
         >
-          <Step onClick={() => ctx?.setRegisterStep(0)}>1</Step>
-          <Step onClick={() => ctx?.setRegisterStep(1)}>2</Step>
-          <Step onClick={() => ctx?.setRegisterStep(2)}>3</Step>
+          <Step onClick={() => !success && ctx?.setRegisterStep(0)}>1</Step>
+          <Step onClick={() => !success && ctx?.setRegisterStep(1)}>2</Step>
+          <Step onClick={() => !success && ctx?.setRegisterStep(2)}>3</Step>
         </Stepper>
       </div>
-      { !success && ctx?.registerStep === 0 && (
-        <Page1 {...pageData} />
-      ) }
-      { !success && ctx?.registerStep === 1 && (
-        <Page2 {...pageData} />
-      ) }
-      { success && <ThankYouPage /> }
+      <div className="py-5">
+        {errMsg && <Alert color="red" className="my-4 md:w-auto w-[90%] mx-auto">{errMsg}</Alert>}
+        { !success && ctx?.registerStep === 0 && (
+          <Page1 {...pageData} />
+        ) }
+        { !success && ctx?.registerStep === 1 && (
+          <Page2 {...pageData} />
+        ) }
+        { success && <ThankYouPage /> }
+      </div>
     </> 
   )
 }
@@ -66,11 +75,17 @@ export function Title({ children }: { children: ReactNode }) {
 }
 
 export const CheckRegister = (ctx:any) => {
-  console.log(ctx);
   if(ctx?.isLoggedIn()) {
-    if(!ctx?.userData?.country) {
-      ctx?.setRegisterStep(1);
+    if(!ctx?.userData) {
+      ctx?.setRegisterStep(0);
+      return true;
     }
+    else if(!ctx?.userData?.country) {
+      ctx?.setRegisterStep(1);
+      return true;
+    }
+  } else {
+    ctx?.setRegisterStep(0);
+    return true;
   }
-  return false;
 }

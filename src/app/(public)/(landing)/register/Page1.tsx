@@ -6,18 +6,53 @@ import { ChangeEvent, use, useContext, useEffect, useState } from "react";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { Context } from "@/app/context/provider";
 import { addDoc, collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { Container, pageDataTypes, Title } from "./Contents";
+import { CheckRegister, Container, pageDataTypes, Title } from "./Contents";
+import { parse } from "path";
+import { findUserByUid, parseFirebaseError } from "@/app/etc/firebase";
 
 export default function Page1(props:pageDataTypes) {
-  const ctx:any = useContext(Context);
-  const { setIsLoading, isLoading } = props;
+  useEffect(() => {
+    if(ctx?.isLoggedIn()) {
+      if(!ctx?.userData) {
+        setForm({
+          ...form,
+          email: ctx?.userCredential?.user?.email,
+        });
+      } else {
+        setForm({
+          ...form,
+          email: ctx?.userData?.email,
+          first_name: ctx?.userData?.first_name,
+          last_name: ctx?.userData?.last_name,
+          gender: ctx?.userData?.gender,
+        });
+      }
+    } else {
+      if(ctx?.landingEmail) {
+        setForm({
+          ...form,
+          email: ctx?.landingEmail,
+        });
+        ctx?.setState({
+          landingEmail: '',
+        });
+      }
+    }
+
+    return () => {
+      if(ctx?.landingEmail) ctx?.setState({
+        landingEmail: '',
+      })
+    }
+  }, []);
+
+  const { setIsLoading, isLoading, ctx, setErrMsg, tempData, setTempData } = props;
 
   const defaultValues = {
     date: "",
   }
 
   const [form, setForm] = useState(defaultValues);
-  const [errMsg, setErrMsg] = useState("");
 
   const validate = () => {
     if (!form.first_name) {
@@ -26,23 +61,25 @@ export default function Page1(props:pageDataTypes) {
     if (!form.last_name) {
       return "Last name is required";
     }
-    if (!form.email) {
-      return "Email is required";
-    }
-    if (!form.password) {
-      return "Password is required";
-    }
-    if (!form.rpassword) {
-      return "Repeat Password is required";
-    }
-    if (form.rpassword !== form.password) {
-      return "Repeat password is not matched with Password";
-    }
-    if (!form.date) {
-      return "Date of birth is required";
-    }
     if (!form.gender) {
       return "Gender is required";
+    }
+    if (!ctx?.isLoggedIn()) {
+      if (!form.date) {
+        return "Date of birth is required";
+      }
+      if (!form.email) {
+        return "Email is required";
+      }
+      if (!form.password) {
+        return "Password is required";
+      }
+      if (!form.rpassword) {
+        return "Repeat Password is required";
+      }
+      if (form.rpassword !== form.password) {
+        return "Repeat password is not matched with Password";
+      }
     }
     return "";
   };
@@ -66,56 +103,92 @@ export default function Page1(props:pageDataTypes) {
     });
   }
 
-  const submitForm = (e) => {
-    e.preventDefault();
-    setIsDirty(true);
-    if (validate()) return;
-    const fbApp = ctx?.state?.firebase?.app;
-    const fbDb = ctx?.state?.firebase?.db;
-    if(fbApp) {
+  const submit = {
+    account: () => {
       setIsLoading(true);
+
+      const fbApp = ctx?.state?.firebase?.app;
       const auth = getAuth(fbApp);
       const email = form.email;
       createUserWithEmailAndPassword(auth, email, form.password)
         .then((resp) => {
-          const userDocRef = collection(fbDb, `user_data/${resp.user.uid}`);
-
-          const userData = {
-            uid: resp.user.uid,
-            first_name: form.first_name || '',
-            last_name: form.last_name || '',
-            email: email,
-            date: form.startDate || '', // Provide a default value if undefined
-            gender: form.gender || '',
-          };
-          addDoc(userDocRef, userData)
-          .then((resp2:any) => {
-            props.setSuccess(true);
-            setIsLoading(false);
-          })
-          .catch((error2:any) => {
-            setErrMsg('Error creating account. Please try again later. Or check the email and password you entered.');
-            setTimeout(() => {
-              setErrMsg('');
-            }, 5000);
-            setIsLoading(false);
+          submit.userData(resp.user.uid)
+          
+          ctx?.setState({
+            userCredential: resp,
+          });
+          tempData({
+            userCredential: resp,
           });
         })
         .catch((error) => {
-          console.log(error);
-          setErrMsg('Error creating account. Please try again later. Or check the email and password you entered.');
+          window.scrollTo(0, 0);
+          setErrMsg(parseFirebaseError(error));
           setTimeout(() => {
-            setErrMsg('');
+            props.setErrMsg('');
           }, 5000);
           setIsLoading(false);
         });
+    },
+    userData: (uid:any) => {
+      setIsLoading(true);
+
+      const fbDb = ctx?.state?.firebase?.db;
+
+      const userData = {
+        uid,
+        first_name: form.first_name || '',
+        last_name: form.last_name || '',
+        email: form.email,
+        date: form?.date?.startDate || '', // Provide a default value if undefined
+        gender: form.gender || '',
+      };
+
+      const userDocRef = collection(fbDb, `user_data`);
+
+      addDoc(userDocRef, userData)
+      .then((resp2:any) => {
+        setIsLoading(false);
+        const td = tempData;
+        debugger;
+        findUserByUid(uid).then((userData) => {
+          ctx?.setState({
+            userData,
+          });
+          ctx?.setRegisterStep(1);
+        }).catch((e) => { 
+            setErrMsg(parseFirebaseError(e));
+        });
+      })
+      .catch((error2:any) => {
+        window.scrollTo(0, 0);
+        setErrMsg(parseFirebaseError(error2));
+        setTimeout(() => {
+          setErrMsg('');
+        }, 5000);
+        setIsLoading(false);
+      });
+
+    },
+  }
+
+  const submitForm = (e) => {
+    e.preventDefault();
+    setIsDirty(true);
+    if (validate()) return;
+    
+    if (!ctx?.isLoggedIn()) {
+      submit.account();
+    } else {
+      submit.userData(ctx?.userCredential?.user?.uid);
     }
   }
 
+  const noUserData = ctx?.isLoggedIn() && !ctx?.userData;
+
   return (
     <>
-      {(dirty() && validate()) && <Alert color="red">{validate()}</Alert>}
-      {errMsg && <Alert color="red">{errMsg}</Alert>}
+      {(dirty() && validate()) && <Alert color="red" className="my-4 md:w-auto w-[90%] mx-auto">{validate()}</Alert>}
       <Container>
         <form onSubmit={submitForm} className="layout-content-container flex flex-col md:max-w-[512px] py-5 flex-1">
           <Title>Create Account</Title>
@@ -127,7 +200,7 @@ export default function Page1(props:pageDataTypes) {
                 className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
                 defaultValue={form?.first_name}
                 onChange={e => handleInput("first_name", e)}
-                disabled={isLoading}
+                disabled={isLoading || (ctx?.isLoggedIn() && !noUserData)}
                 required
               />
             </label>
@@ -140,7 +213,7 @@ export default function Page1(props:pageDataTypes) {
                 className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
                 defaultValue={form?.last_name}
                 onChange={e => handleInput("last_name", e)}
-                disabled={isLoading}
+                disabled={isLoading || (ctx?.isLoggedIn() && !noUserData)}
                 required
               />
             </label>
@@ -154,70 +227,76 @@ export default function Page1(props:pageDataTypes) {
                 defaultValue={form?.email}
                 onChange={e => handleInput("email", e)}
                 type="email"
-                disabled={isLoading}
+                disabled={isLoading || ctx?.isLoggedIn()}
                 required
               />
             </label>
           </div>
-          <div className="flex flex-wrap items-end gap-4 px-4 py-3">
-            <label className="flex flex-col min-w-40 flex-1">
-              <p className="text-[#111418] text-base font-medium leading-normal pb-2">Password</p>
-              <input
-                placeholder="Enter password"
-                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
-                defaultValue={form?.password}
-                onChange={e => handleInput("password", e)}
-                type="password"
-                disabled={isLoading}
-                required
-                minLength={8}
-              />
-            </label>
-          </div>
-          <div className="flex flex-wrap items-end gap-4 px-4 py-3">
-            <label className="flex flex-col min-w-40 flex-1">
-              <p className="text-[#111418] text-base font-medium leading-normal pb-2">Repeat Password</p>
-              <input
-                placeholder="Enter repeat password"
-                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
-                defaultValue={form?.rpassword}
-                onChange={e => handleInput("rpassword", e)}
-                type="password"
-                disabled={isLoading}
-                required
-                minLength={8}
-              />
-            </label>
-          </div>
-          <div className="flex flex-wrap items-end gap-4 px-4 py-3">
-            <label className="flex flex-col min-w-40 flex-1">
-              <p className="text-[#111418] text-base font-medium leading-normal pb-2">Date of Birth</p>
-              {/* <input
-                placeholder="MM/DD/YYYY"
-                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
-                value=""
-              /> */}
-              <Date onChange={handleDateChange} />
-            </label>
-          </div>
+          { !ctx?.isLoggedIn() && (
+            <>
+              <div className="flex flex-wrap items-end gap-4 px-4 py-3">
+                <label className="flex flex-col min-w-40 flex-1">
+                  <p className="text-[#111418] text-base font-medium leading-normal pb-2">Password</p>
+                  <input
+                    placeholder="Enter password"
+                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
+                    defaultValue={form?.password}
+                    onChange={e => handleInput("password", e)}
+                    type="password"
+                    disabled={isLoading}
+                    required
+                    minLength={8}
+                  />
+                </label>
+              </div>
+              <div className="flex flex-wrap items-end gap-4 px-4 py-3">
+                <label className="flex flex-col min-w-40 flex-1">
+                  <p className="text-[#111418] text-base font-medium leading-normal pb-2">Repeat Password</p>
+                  <input
+                    placeholder="Enter repeat password"
+                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
+                    defaultValue={form?.rpassword}
+                    onChange={e => handleInput("rpassword", e)}
+                    type="password"
+                    disabled={isLoading}
+                    required
+                    minLength={8}
+                  />
+                </label>
+              </div>
+            </>
+          ) }
+          { (!ctx?.isLoggedIn() || noUserData) && (
+            <div className="flex flex-wrap items-end gap-4 px-4 py-3">
+              <label className="flex flex-col min-w-40 flex-1">
+                <p className="text-[#111418] text-base font-medium leading-normal pb-2">Date of Birth</p>
+                {/* <input
+                  placeholder="MM/DD/YYYY"
+                  className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
+                  value=""
+                /> */}
+                <Date value={form?.date} onChange={handleDateChange} />
+              </label>
+            </div>
+          ) }
           <div className="flex flex-wrap gap-3 p-4 justify-center">
             <label
               className="text-sm font-medium leading-normal flex items-center justify-center rounded-xl border border-[#dce0e5] px-4 h-11 text-[#111418] has-[:checked]:border-[3px] has-[:checked]:px-3.5 has-[:checked]:border-[#1980e6] relative cursor-pointer"
             >
               Male
-              <input type="radio" className="invisible absolute" onChange={e => handleInput("gender", e, 'm')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
+              <input checked={form?.gender === 'm' || false} type="radio" className="invisible absolute" onChange={e => handleInput("gender", e, 'm')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
             </label>
             <label
               className="text-sm font-medium leading-normal flex items-center justify-center rounded-xl border border-[#dce0e5] px-4 h-11 text-[#111418] has-[:checked]:border-[3px] has-[:checked]:px-3.5 has-[:checked]:border-[#1980e6] relative cursor-pointer"
             >
               Female
-              <input type="radio" className="invisible absolute" onChange={e => handleInput("gender", e, 'f')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
+              <input checked={form?.gender === 'f' || false} type="radio" className="invisible absolute" onChange={e => handleInput("gender", e, 'f')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
             </label>
             <label
               className="text-sm font-medium leading-normal flex items-center justify-center rounded-xl border border-[#dce0e5] px-4 h-11 text-[#111418] has-[:checked]:border-[3px] has-[:checked]:px-3.5 has-[:checked]:border-[#1980e6] relative cursor-pointer"
             >
               Other
-              <input type="radio" className="invisible absolute" onChange={e => handleInput("gender", e, 'o')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
+              <input checked={form?.gender === 'o' || false} type="radio" className="invisible absolute" onChange={e => handleInput("gender", e, 'o')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
             </label>
           </div>
           {/* <div className="flex flex-wrap gap-3 p-4 justify-center">
@@ -242,7 +321,18 @@ export default function Page1(props:pageDataTypes) {
             >
               <span className="truncate">Create account</span>
             </button> */}
-            <Button loading={isLoading} type="submit" color="blue" className="w-full" disabled={dirty() && validate()}>Create Account</Button>
+            { !ctx?.isLoggedIn() && (
+              <Button loading={isLoading} type="submit" color="blue" className="w-full" disabled={dirty() && validate()}>Create Account</Button>
+            ) }
+            { noUserData && (
+              <Button loading={isLoading} type="submit" color="blue" className="w-full" disabled={dirty() && validate()}>Submit</Button>
+            ) }
+            { ctx?.isLoggedIn() && !noUserData && (
+              <Button onClick={e => {
+                e.preventDefault();
+                ctx?.setRegisterStep(1);
+              }} type="button" color="blue" className="w-full">Next</Button>
+            ) }
           </div>
         </form>
       </Container>

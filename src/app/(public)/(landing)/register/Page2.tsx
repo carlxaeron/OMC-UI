@@ -1,10 +1,17 @@
 import { convertStyleToObject } from "@/app/etc/helper";
-import { Container, pageDataTypes, Title } from "./Contents";
+import { CheckRegister, Container, pageDataTypes, Title } from "./Contents";
 import { Button } from "@material-tailwind/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { collection, doc, updateDoc } from "firebase/firestore";
+import { findUserByUid, parseFirebaseError } from "@/app/etc/firebase";
 
 export default function Page2(props:pageDataTypes) {
   const [country, setCountry] = useState('');
+  const { setIsLoading, setSuccess, setErrMsg, ctx } = props;
+
+  useEffect(() => {
+    
+  }, [])
 
   const isSameCty = (cty) => {
     return cty.name.toLowerCase() === country?.toLowerCase()
@@ -12,8 +19,42 @@ export default function Page2(props:pageDataTypes) {
 
   const submitCountry = (e:any) => {
     e.preventDefault();
-    if (props?.ctx?.isLoggedIn()) {
-      console.log(props);
+    if(country) {
+        setIsLoading(true);
+
+        const fbDb = ctx?.state?.firebase?.db;
+        const userDocRef = collection(fbDb, `user_data`);
+
+        const docId = ctx?.userData?.id;
+        updateDoc(doc(userDocRef, docId), {
+          country,
+        }).then(() => {
+          setIsLoading(false);
+          setSuccess(true);
+          ctx?.setRegisterStep(2);
+        }).catch((error2:any) => {
+          window.scrollTo(0, 0);
+          setErrMsg(parseFirebaseError(error2));
+          setTimeout(() => {
+            setErrMsg('');
+          }, 5000);
+          setIsLoading(false);
+        });
+        // console.log('docId', docId);
+        // doc(userDocRef, docId).then((userDoc) => {
+        //   console.log('userDoc', userDoc);
+        // });
+  
+        // updateDoc(userDoc, {
+        //   country,
+        // }).catch((error2:any) => {
+        //   window.scrollTo(0, 0);
+        //   setErrMsg(parseFirebaseError(error2));
+        //   setTimeout(() => {
+        //     setErrMsg('');
+        //   }, 5000);
+        //   setIsLoading(false);
+        // });
     }
   }
 

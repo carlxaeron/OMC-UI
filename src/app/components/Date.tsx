@@ -1,14 +1,14 @@
 import { Input, Popover, PopoverContent, PopoverHandler } from "@material-tailwind/react";
 import { useState } from "react";
 import { formatDate } from "date-fns";
-import { DayPicker } from "react-day-picker";
+import { DateRange, DayPicker } from "react-day-picker";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
-import Datepicker from "react-tailwindcss-datepicker";
+import Datepicker, { DateRangeType } from "react-tailwindcss-datepicker";
 
 export default function Date(props: any) {
-  const [date, setDate] = useState<Date>();
+  const [date, setDate] = useState<DateRangeType>(props.value || false);
 
-  const handleDateChange = (date: Date) => {
+  const handleDateChange = (date: DateRangeType) => {
     props.onChange(date);
     setDate(date);
   }

@@ -22,6 +22,7 @@ export default function Provider(props: { children: any; data: any; }) {
             db,
         },
         registerStep: 0,
+        landingEmail: '',
     });
     const router = useRouter();
 
@@ -63,13 +64,17 @@ export default function Provider(props: { children: any; data: any; }) {
 
     useEffect(() => {
         if (state?.userCredential) {
-            findUserByUid(state?.userCredential.user.uid).then((userData) => {
-                console.log(userData, 'userDatainfind');
-        //         localStorage.setItem("userData", JSON.stringify(userData));
+            const uid = state?.userCredential?.user?.uid;
+            console.log('uid', uid);
+            findUserByUid(uid).then((userData) => {
+            if (!userData) {
+                router.push('/register');
+            } else {
                 setState2({
                     ...state,
                     userData,
                 });
+            }
             }).catch((e) => { console.error(e); });
         }
             
@@ -83,6 +88,7 @@ export default function Provider(props: { children: any; data: any; }) {
         localStorage.removeItem("userCredential");
         setState({
             userCredential: null,
+            userData: null,
         });
         router.push('/');
     }
@@ -134,4 +140,5 @@ export type ProviderValue = {
     logout: () => void;
     toggleHomeMenu: (open?: boolean) => void;
     toggleLandingMenu: (open?: boolean) => void;
+    setRegisterStep: (step: number) => void;
 } | {} | undefined;

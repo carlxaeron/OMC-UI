@@ -36,3 +36,17 @@ export const findUserByUid = async (uid: string) => {
 export const app = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
 export const db = getFirestore(app);
+
+export const parseFirebaseError = (error: any) => {
+  if (error.code === "auth/invalid-credential") {
+    return 'Invalid Credential / User not exists.';
+  } else if (error.code === 'auth/email-already-in-use') {
+    return 'Email already exists.';
+  } else if (error.code === 'auth/user-not-found') {
+    return 'User not found.';
+  } else if (error.code === 'auth/wrong-password') {
+    return 'Wrong password.';
+  } else {
+    return error.message;
+  }
+}

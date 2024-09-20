@@ -1,7 +1,8 @@
 'use client';
 
 import { Context } from "@/app/context/provider";
-import { Button } from "@material-tailwind/react";
+import { parseFirebaseError } from "@/app/etc/firebase";
+import { Alert, Button } from "@material-tailwind/react";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, use, useContext, useEffect, useState } from "react";
@@ -52,8 +53,7 @@ export default function Contents() {
           })
         })
         .catch((error) => {
-          console.error("Error signing in:", error);
-          setErrMsg("Error signing in. Please check your email and password.");
+          setErrMsg(parseFirebaseError(error));
           setTimeout(() => {
             setErrMsg("");
           }, 5000);
@@ -64,6 +64,7 @@ export default function Contents() {
 
   return (
     <>
+      {errMsg && <Alert color="red" className="my-4 md:w-auto w-[90%] mx-auto">{errMsg}</Alert>}
       <div className="md:px-40 flex flex-1 justify-center py-5">
         <form onSubmit={submitForm} className="layout-content-container flex flex-col md:max-w-[512px] py-5 flex-1">
           <h1 className="text-[#111418] tracking-light text-[32px] font-bold leading-tight px-4 text-center pb-3 pt-6">Login</h1>
