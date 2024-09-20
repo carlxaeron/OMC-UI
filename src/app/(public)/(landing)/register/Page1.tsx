@@ -161,17 +161,14 @@ export default function Page1(props:pageDataTypes) {
       addDoc(userDocRef, userData)
       .then((resp2:any) => {
         setIsLoading(false);
-        ctx?.setRegisterStep(1);
-        if(!conf?.newRegister) {
-          console.log('resp2', resp2);
-          ctx?.setState({
-            userData: {
-              id: resp2.id,
-              date: form?.date,
-              ...userData,
-            },
-          })
-        }
+        ctx?.setState({
+          registerStep: 1,
+          userData: {
+            id: resp2.id,
+            date: form?.date,
+            ...userData,
+          },
+        })
       })
       .catch((error2:any) => {
         setErrMsg(parseFirebaseError(error2));
@@ -289,19 +286,19 @@ export default function Page1(props:pageDataTypes) {
               className="text-sm font-medium leading-normal flex items-center justify-center rounded-xl border border-[#dce0e5] px-4 h-11 text-[#111418] has-[:checked]:border-[3px] has-[:checked]:px-3.5 has-[:checked]:border-[#1980e6] relative cursor-pointer"
             >
               Male
-              <input checked={form?.gender === 'm' || false} type="radio" className="invisible absolute" onChange={e => handleInput("gender", e, 'm')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
+              <input checked={form?.gender === 'm' || false} type="radio" className="invisible absolute" onChange={e => !(isLoading || (ctx?.isLoggedIn() && !noUserData)) && handleInput("gender", e, 'm')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
             </label>
             <label
               className="text-sm font-medium leading-normal flex items-center justify-center rounded-xl border border-[#dce0e5] px-4 h-11 text-[#111418] has-[:checked]:border-[3px] has-[:checked]:px-3.5 has-[:checked]:border-[#1980e6] relative cursor-pointer"
             >
               Female
-              <input checked={form?.gender === 'f' || false} type="radio" className="invisible absolute" onChange={e => handleInput("gender", e, 'f')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
+              <input checked={form?.gender === 'f' || false} type="radio" className="invisible absolute" onChange={e => !(isLoading || (ctx?.isLoggedIn() && !noUserData)) && handleInput("gender", e, 'f')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
             </label>
             <label
               className="text-sm font-medium leading-normal flex items-center justify-center rounded-xl border border-[#dce0e5] px-4 h-11 text-[#111418] has-[:checked]:border-[3px] has-[:checked]:px-3.5 has-[:checked]:border-[#1980e6] relative cursor-pointer"
             >
               Other
-              <input checked={form?.gender === 'o' || false} type="radio" className="invisible absolute" onChange={e => handleInput("gender", e, 'o')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
+              <input checked={form?.gender === 'o' || false} type="radio" className="invisible absolute" onChange={e => !(isLoading || (ctx?.isLoggedIn() && !noUserData)) && handleInput("gender", e, 'o')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
             </label>
           </div>
           {/* <div className="flex flex-wrap gap-3 p-4 justify-center">

@@ -31,7 +31,13 @@ export default function Page2(props:pageDataTypes) {
         }).then(() => {
           setIsLoading(false);
           setSuccess(true);
-          ctx?.setRegisterStep(2);
+          ctx?.setState({
+            registerStep: 2,
+            userData: {
+              ...ctx?.userData,
+              country,
+            }
+          });
         }).catch((error2:any) => {
           window.scrollTo(0, 0);
           setErrMsg(parseFirebaseError(error2));

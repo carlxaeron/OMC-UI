@@ -44,6 +44,18 @@ export default function Contents() {
   }, process.env.NODE_ENV !== 'production' ? [cform] : [])
 
   useEffect(() => {
+    if(!ctx?.isLoggedIn() && ctx?.landingEmail) {
+      setCform({
+        ...cform,
+        email: ctx?.landingEmail,
+      });
+      ctx?.setState({
+        landingEmail: '',
+      })
+    }
+  }, [])
+
+  useEffect(() => {
     if(ctx?.isLoggedIn()) {
       if(!ctx?.userData) {
         setCform({
@@ -51,8 +63,6 @@ export default function Contents() {
           email: ctx?.userCredential?.user?.email || '',
         })
       } else {
-        console.log('ctx?.userData', ctx?.userData?.date);
-        debugger;
         setCform({
           ...cform,
           email: ctx?.userCredential?.user?.email || '',
