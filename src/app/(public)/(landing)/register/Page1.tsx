@@ -4,7 +4,7 @@ import Date from "@/app/components/Date";
 import { Button, Alert } from "@material-tailwind/react";
 import { ChangeEvent, use, useContext, useEffect, useState } from "react";
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { Context } from "@/app/context/provider";
+import { Context, useStore } from "@/app/context/provider";
 import { addDoc, collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { CheckRegister, Container, pageDataTypes, Title } from "./Contents";
 import { parse } from "path";
@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 
 export default function Page1(props:pageDataTypes) {
   // useEffect(() => {
-  //   if(ctx?.isLoggedIn()) {
+  //   if(storeState.userCredential) {
   //     if(!ctx?.userData) {
   //       setForm({
   //         ...form,
@@ -22,10 +22,10 @@ export default function Page1(props:pageDataTypes) {
   //     } else {
   //       setForm({
   //         ...form,
-  //         email: ctx?.userData?.email,
-  //         first_name: ctx?.userData?.first_name,
-  //         last_name: ctx?.userData?.last_name,
-  //         gender: ctx?.userData?.gender,
+  //         email: storeState.userData?.email,
+  //         first_name: storeState.userData?.first_name,
+  //         last_name: storeState.userData?.last_name,
+  //         gender: storeState.userData?.gender,
   //       });
   //     }
   //   } else {
@@ -48,6 +48,8 @@ export default function Page1(props:pageDataTypes) {
   // }, []);
 
   const router = useRouter();
+  const storeState = useStore((state) => state.state);
+  const storeAction = useStore((state) => state);
   
   const { setIsLoading, isLoading, ctx, setErrMsg } = props;
   const [newRegister, setNewRegister] = useState(false);
@@ -70,7 +72,7 @@ export default function Page1(props:pageDataTypes) {
     if (!form.gender) {
       return "Gender is required";
     }
-    if (!ctx?.isLoggedIn()) {
+    if (!storeState.userCredential) {
       if (!dateCheck) {
         return "Date of birth is required";
       }
@@ -114,24 +116,24 @@ export default function Page1(props:pageDataTypes) {
   }
 
   useEffect(() => {
-    if(ctx?.isLoggedIn() && newRegister) {
+    if(storeState.userCredential && newRegister) {
       setNewRegister(false);
-      submit.userData(ctx?.userCredential?.user?.uid, { newRegister: true });
+      submit.userData(storeState.userCredential?.user?.uid, { newRegister: true });
     }
-  }, [ctx?.userCredential, newRegister]);
+  }, [storeState.userCredential, newRegister]);
 
   const submit = {
     account: () => {
       setIsLoading(true);
 
-      const fbApp = ctx?.state?.firebase?.app;
+      const fbApp = storeState.firebase?.app;
       const auth = getAuth(fbApp);
       const email = form.email;
       createUserWithEmailAndPassword(auth, email, form.password)
         .then(() => {
           signInWithEmailAndPassword(auth, email, form.password)
           .then((resp) => {
-            ctx?.setState({
+            storeAction.setState({
               userCredential: resp,
             });
             setNewRegister(true);
@@ -147,7 +149,7 @@ export default function Page1(props:pageDataTypes) {
     userData: (uid:any, conf:any = {}) => {
       // setIsLoading(true);
 
-      const fbDb = ctx?.state?.firebase?.db;
+      const fbDb = storeState.firebase?.db;
 
       const userData = {
         uid,
@@ -161,7 +163,7 @@ export default function Page1(props:pageDataTypes) {
       addDoc(userDocRef, userData)
       .then((resp2:any) => {
         setIsLoading(false);
-        ctx?.setState({
+        storeAction.setState({
           registerStep: 1,
           userData: {
             id: resp2.id,
@@ -181,14 +183,14 @@ export default function Page1(props:pageDataTypes) {
     setIsDirty(true);
     if (validate()) return;
     
-    if (!ctx?.isLoggedIn()) {
+    if (!storeState.userCredential) {
       submit.account();
     } else {
-      submit.userData(ctx?.userCredential?.user?.uid);
+      submit.userData(storeState.userCredential?.user?.uid);
     }
   }
 
-  const noUserData = ctx?.isLoggedIn() && !ctx?.userData;
+  const noUserData = storeState.userCredential && !ctx?.userData;
 
   return (
     <>
@@ -204,7 +206,7 @@ export default function Page1(props:pageDataTypes) {
                 className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
                 defaultValue={form?.first_name}
                 onChange={e => handleInput("first_name", e)}
-                disabled={isLoading || (ctx?.isLoggedIn() && !noUserData)}
+                disabled={isLoading || (storeState.userCredential && !noUserData)}
                 required
               />
             </label>
@@ -217,7 +219,7 @@ export default function Page1(props:pageDataTypes) {
                 className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
                 defaultValue={form?.last_name}
                 onChange={e => handleInput("last_name", e)}
-                disabled={isLoading || (ctx?.isLoggedIn() && !noUserData)}
+                disabled={isLoading || (storeState.userCredential && !noUserData)}
                 required
               />
             </label>
@@ -231,12 +233,12 @@ export default function Page1(props:pageDataTypes) {
                 defaultValue={form?.email}
                 onChange={e => handleInput("email", e)}
                 type="email"
-                disabled={isLoading || ctx?.isLoggedIn()}
+                disabled={isLoading || storeState.userCredential}
                 required
               />
             </label>
           </div>
-          { !ctx?.isLoggedIn() && (
+          { !storeState.userCredential && (
             <>
               <div className="flex flex-wrap items-end gap-4 px-4 py-3">
                 <label className="flex flex-col min-w-40 flex-1">
@@ -278,7 +280,7 @@ export default function Page1(props:pageDataTypes) {
                 className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
                 value=""
               /> */}
-              <Date disabled={isLoading || (ctx?.isLoggedIn() && !noUserData)} value={form?.date} onChange={handleDateChange} />
+              <Date disabled={isLoading || (storeState.userCredential && !noUserData)} value={form?.date} onChange={handleDateChange} />
             </label>
           </div>
           <div className="flex flex-wrap gap-3 p-4 justify-center">
@@ -286,19 +288,19 @@ export default function Page1(props:pageDataTypes) {
               className="text-sm font-medium leading-normal flex items-center justify-center rounded-xl border border-[#dce0e5] px-4 h-11 text-[#111418] has-[:checked]:border-[3px] has-[:checked]:px-3.5 has-[:checked]:border-[#1980e6] relative cursor-pointer"
             >
               Male
-              <input checked={form?.gender === 'm' || false} type="radio" className="invisible absolute" onChange={e => !(isLoading || (ctx?.isLoggedIn() && !noUserData)) && handleInput("gender", e, 'm')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
+              <input checked={form?.gender === 'm' || false} type="radio" className="invisible absolute" onChange={e => !(isLoading || (storeState.userCredential && !noUserData)) && handleInput("gender", e, 'm')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
             </label>
             <label
               className="text-sm font-medium leading-normal flex items-center justify-center rounded-xl border border-[#dce0e5] px-4 h-11 text-[#111418] has-[:checked]:border-[3px] has-[:checked]:px-3.5 has-[:checked]:border-[#1980e6] relative cursor-pointer"
             >
               Female
-              <input checked={form?.gender === 'f' || false} type="radio" className="invisible absolute" onChange={e => !(isLoading || (ctx?.isLoggedIn() && !noUserData)) && handleInput("gender", e, 'f')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
+              <input checked={form?.gender === 'f' || false} type="radio" className="invisible absolute" onChange={e => !(isLoading || (storeState.userCredential && !noUserData)) && handleInput("gender", e, 'f')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
             </label>
             <label
               className="text-sm font-medium leading-normal flex items-center justify-center rounded-xl border border-[#dce0e5] px-4 h-11 text-[#111418] has-[:checked]:border-[3px] has-[:checked]:px-3.5 has-[:checked]:border-[#1980e6] relative cursor-pointer"
             >
               Other
-              <input checked={form?.gender === 'o' || false} type="radio" className="invisible absolute" onChange={e => !(isLoading || (ctx?.isLoggedIn() && !noUserData)) && handleInput("gender", e, 'o')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
+              <input checked={form?.gender === 'o' || false} type="radio" className="invisible absolute" onChange={e => !(isLoading || (storeState.userCredential && !noUserData)) && handleInput("gender", e, 'o')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
             </label>
           </div>
           {/* <div className="flex flex-wrap gap-3 p-4 justify-center">
@@ -323,16 +325,16 @@ export default function Page1(props:pageDataTypes) {
             >
               <span className="truncate">Create account</span>
             </button> */}
-            { !ctx?.isLoggedIn() && (
+            { !storeState.userCredential && (
               <Button loading={isLoading} type="submit" color="blue" className="w-full" disabled={dirty() && validate()}>Create Account</Button>
             ) }
             { noUserData && (
               <Button loading={isLoading} type="submit" color="blue" className="w-full" disabled={validate()}>Submit</Button>
             ) }
-            { ctx?.isLoggedIn() && !noUserData && (
+            { storeState.userCredential && !noUserData && (
               <Button onClick={e => {
                 e.preventDefault();
-                ctx?.setRegisterStep(1);
+                storeAction.setRegisterStep(1);
               }} type="button" color="blue" className="w-full">Next</Button>
             ) }
           </div>

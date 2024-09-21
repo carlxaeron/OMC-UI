@@ -1,11 +1,13 @@
 'use client';
 
-import { Context } from "@/app/context/provider";
+import { Context, useStore } from "@/app/context/provider";
 import { convertStyleToObject } from "@/app/etc/helper"
 import { useRouter } from "next/navigation"
 import { useContext, useState } from "react";
 
 export default function Contents() {
+  const storeAction = useStore((state) => state)
+  const storeState = useStore((state) => state.state)
   const router = useRouter()
   const ctx = useContext(Context)
   const [email, setEmail] = useState('')
@@ -13,7 +15,7 @@ export default function Contents() {
   const handleForm = (e) => {
     e.preventDefault()
     if (email) {
-      ctx?.setState({
+      storeAction.setState({
         landingEmail: email,
       });
       router.push("/register");
@@ -45,7 +47,7 @@ export default function Contents() {
                   Every Seventh Day Adventist is a Missionary
                 </h2>
               </div>
-              { !ctx?.isLoggedIn() && (
+              { !storeState.userCredential && (
                 <label className="flex flex-col min-w-40 h-14 w-full max-w-[480px] @[480px]:h-16">
                   <form onSubmit={handleForm} className="flex w-full flex-1 items-stretch rounded-xl h-full">
                     <div

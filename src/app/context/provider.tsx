@@ -2,30 +2,38 @@
 
 import { ThemeProvider } from "@material-tailwind/react";
 import React, { createContext, useEffect, useState } from "react";
-import { app, db, findUserByUid, UserData } from "../etc/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { app, db, UserData } from "../etc/firebase";
 import { useRouter } from "next/navigation";
-import { set } from "date-fns";
-import { CheckRegister } from "../(public)/(landing)/register/Contents";
+import { create } from "zustand";
 
 export const Context = createContext({});
 
+const defaultState = {
+    userCredential: null,
+    userData: null,
+    homeMenuOpen: false,
+    landingMenuOpen: false,
+    isMobile: false,
+    firebase: {
+        app,
+        db,
+    },
+    registerStep: 0,
+    landingEmail: '',
+}
+
+export const useStore = create((set:any) => ({
+    state: defaultState,
+    isLoggedIn: () => set((state:any) => !!state.state?.userCredential),
+    setState: (newState: any) => set((state:any) => ({ state: {...state.state, ...newState} })),
+    setRegisterStep: (step: number) => set((state:any) => ({ state: {...state.state, registerStep: step} })),
+}));
+
 export default function Provider(props: { children: any; data: any; }) {
-    const defaultState = {
-        userCredential: null,
-        userData: null,
-        homeMenuOpen: false,
-        landingMenuOpen: false,
-        isMobile: false,
-        firebase: {
-            app,
-            db,
-        },
-        registerStep: 0,
-        landingEmail: '',
-    }
     const [state, setState2] = useState(defaultState);
     const router = useRouter();
+    const storeState = useStore((state) => state.state);
+    const storeAction = useStore((state) => state);
 
     const setState = async (newState:any) => {
         setState2({
@@ -79,6 +87,13 @@ export default function Provider(props: { children: any; data: any; }) {
     useEffect(() => {
         if(process.env.NODE_ENV !== 'production') console.log('STATE', state);
     }, process.env.NODE_ENV !== 'production' ? [state] : []);
+
+    useEffect(() => {
+        if(process.env.NODE_ENV !== 'production') {
+            console.log('useStore STATE', storeState);
+            console.log('useStore ACTION', storeAction);
+        }
+    }, process.env.NODE_ENV !== 'production' ? [storeState] : []);
 
     const isLoggedIn = () => {
         return !!state?.userCredential;

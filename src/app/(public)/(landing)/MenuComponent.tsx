@@ -5,12 +5,13 @@ import { Card, CardBody } from "@material-tailwind/react";
 import { useRouter } from "next/navigation";
 import React, { use, useContext, useState } from "react";
 import { mapping } from "./mapping";
-import { Context, ProviderValue } from "@/app/context/provider";
+import { Context, ProviderValue, useStore } from "@/app/context/provider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { Logo } from "./Header";
 
 export default function MenuComponent(props:any) {
+  const storeState = useStore((state) => state.state);
   const isFooter = props.type === 'footer';
   const isAside= props.type === 'aside';
   const isHeader= !props.type;
@@ -30,9 +31,9 @@ export default function MenuComponent(props:any) {
   }
 
   const linkBlank = (item:any, ctx = {}) => {
-    if(item.metadata.loggedIn === false && ctx?.isLoggedIn()) {
+    if(item.metadata.loggedIn === false && storeState.userCredential) {
       return true;
-    } else if(item.metadata.loggedIn === true && !ctx?.isLoggedIn()) {
+    } else if(item.metadata.loggedIn === true && !storeState.userCredential) {
       return true;
     }
   }
@@ -119,8 +120,8 @@ export default function MenuComponent(props:any) {
         <ReturnHtml />
       </div>
     </div>
-      { ctx?.isLoggedIn() && (
-        <h3 className="text-[#111418] text-lg font-bold leading-normal sticky bottom-0 left-0 text-center my-4">Hi {ctx?.state?.userData?.first_name} {ctx?.state?.userData?.last_name}</h3>
+      { storeState.userCredential && (
+        <h3 className="text-[#111418] text-lg font-bold leading-normal sticky bottom-0 left-0 text-center my-4">Hi {storeState.userData?.first_name} {storeState.userData?.last_name}</h3>
       ) }
   </aside> : <ReturnHtml />;
 }

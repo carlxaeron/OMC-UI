@@ -1,6 +1,6 @@
 'use client';
 
-import { Context } from "@/app/context/provider";
+import { Context, useStore } from "@/app/context/provider";
 import { parseFirebaseError } from "@/app/etc/firebase";
 import { Alert, Button } from "@material-tailwind/react";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
@@ -9,6 +9,8 @@ import { ChangeEvent, use, useContext, useEffect, useState } from "react";
 
 export default function Contents() {
   const ctx = useContext(Context);
+  const storeState = useStore((state) => state.state);
+  const storeAction = useStore((state) => state);
   const router = useRouter();
   const [form, setForm] = useState({
     email: "",
@@ -40,14 +42,14 @@ export default function Contents() {
   const submitForm = (e) => {
     e.preventDefault();
     setIsLoading(true);
-    const fbApp = ctx?.state?.firebase?.app;
+    const fbApp = storeState.firebase?.app;
     if (fbApp) {
       const auth = getAuth(fbApp);
       signInWithEmailAndPassword(auth, form.email, form.password)
         .then((userCredential) => {
           setIsLoading(false);
           router.push("/home");
-          ctx?.setState({
+          storeAction.setState({
             userCredential,
           })
         })
@@ -63,12 +65,15 @@ export default function Contents() {
 
   return (
     <>
+      { JSON.stringify(storeState) }
       {errMsg && <Alert color="red" className="my-4 md:w-auto w-[90%] mx-auto">{errMsg}</Alert>}
       <div className="md:px-40 flex flex-1 justify-center py-5">
         <form onSubmit={submitForm} className="layout-content-container flex flex-col md:max-w-[512px] py-5 flex-1">
           <h1 className="text-[#111418] tracking-light text-[32px] font-bold leading-tight px-4 text-center pb-3 pt-6">Login</h1>
           <div className="flex flex-wrap items-end gap-4 px-4 py-3">
             <label className="flex flex-col min-w-40 flex-1">
+              <h1>
+              </h1>
               <p className="text-[#111418] text-base font-medium leading-normal pb-2">Email</p>
               <input
                 placeholder="Enter email"

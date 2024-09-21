@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import Page1 from "./Page1";
 import ThankYouPage from "./ThankYou";
 import { Alert, Step, Stepper } from "@material-tailwind/react";
-import { Context, ProviderValue } from "@/app/context/provider";
+import { Context, ProviderValue, useStore } from "@/app/context/provider";
 import { ReactNode } from "react";
 import Page2 from "./Page2";
 
@@ -19,6 +19,9 @@ export type pageDataTypes = {
 }
 
 export default function Contents() {
+  const storeState = useStore((state) => state.state);
+  const storeAction = useStore((state) => state);
+
   const [success, setSuccess] = useState(false);
   const ctx = useContext(Context);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,38 +47,38 @@ export default function Contents() {
   }, process.env.NODE_ENV !== 'production' ? [cform] : [])
 
   useEffect(() => {
-    if(!ctx?.isLoggedIn() && ctx?.landingEmail) {
+    if(!storeState.userCredential && storeState.landingEmail) {
       setCform({
         ...cform,
-        email: ctx?.landingEmail,
+        email: storeState.landingEmail,
       });
-      ctx?.setState({
+      storeAction.setState({
         landingEmail: '',
       })
     }
   }, [])
 
   useEffect(() => {
-    if(ctx?.isLoggedIn()) {
+    if(storeState.userCredential) {
       if(!ctx?.userData) {
         setCform({
           ...cform,
-          email: ctx?.userCredential?.user?.email || '',
+          email: storeState.userCredential?.user?.email || '',
         })
       } else {
         setCform({
           ...cform,
-          email: ctx?.userCredential?.user?.email || '',
-          first_name: ctx?.userData?.first_name || '',
-          last_name: ctx?.userData?.last_name || '',
-          gender: ctx?.userData?.gender || '',
+          email: storeState.userCredential?.user?.email || '',
+          first_name: storeState.userData?.first_name || '',
+          last_name: storeState.userData?.last_name || '',
+          gender: storeState.userData?.gender || '',
           date: {
-            "startDate": ctx?.userData?.date || new Date().toISOString(),
-            "endDate": ctx?.userData?.date || new Date().toISOString(),
+            "startDate": storeState.userData?.date || new Date().toISOString(),
+            "endDate": storeState.userData?.date || new Date().toISOString(),
           }
         });
       }
-      setStep(ctx?.registerStep);
+      setStep(storeState.registerStep);
     }
   }, [ctx?.userData])
 
@@ -88,9 +91,6 @@ export default function Contents() {
       }, 5000);
       setIsLoading(false);
     }
-    // if(ctx?.registerStep !== step) {
-    //   CheckRegister(ctx);
-    // }
   }, [errMsg])
 
   const pageData = {
@@ -108,21 +108,21 @@ export default function Contents() {
     <>
       <div className="px-4 pt-4">
         <Stepper
-          activeStep={ctx?.registerStep}
+          activeStep={storeState.registerStep}
           // isLastStep={(value) => setIsLastStep(value)}
           // isFirstStep={(value) => setIsFirstStep(value)}
         >
-          <Step onClick={() => (ctx?.isLoggedIn()) && !success && ctx?.setRegisterStep(0)}>1</Step>
-          <Step onClick={() => (ctx?.isLoggedIn() && ctx?.userData) && !success && ctx?.setRegisterStep(1)}>2</Step>
-          <Step onClick={() => (ctx?.isLoggedIn() && ctx?.userData && ctx?.userdata?.country) && !success && ctx?.setRegisterStep(2)}>3</Step>
+          <Step onClick={() => (storeState.userCredential) && !success && storeAction.setRegisterStep(0)}>1</Step>
+          <Step onClick={() => (storeState.userCredential && ctx?.userData) && !success && storeAction.setRegisterStep(1)}>2</Step>
+          <Step onClick={() => (storeState.userCredential && ctx?.userData && storeState.userData?.country) && !success && storeAction.setRegisterStep(2)}>3</Step>
         </Stepper>
       </div>
       <div className="py-5">
         {errMsg && <Alert color="red" className="my-4 md:w-auto w-[90%] mx-auto">{errMsg}</Alert>}
-        { !success && ctx?.registerStep === 0 && (
+        { !success && storeState.registerStep === 0 && (
           <Page1 {...pageData} />
         ) }
-        { !success && ctx?.registerStep === 1 && (
+        { !success && storeState.registerStep === 1 && (
           <Page2 {...pageData} />
         ) }
         { success && <ThankYouPage /> }
@@ -140,18 +140,18 @@ export function Title({ children }: { children: ReactNode }) {
   return <h1 className="text-[#111418] tracking-light text-[32px] font-bold leading-tight px-4 text-center pb-3 pt-6">{children}</h1>
 }
 
-export const CheckRegister = (ctx:any) => {
-  if(ctx?.isLoggedIn()) {
+export const CheckRegister = (ctx:any, action:any) => {
+  if(ctx.userCredential) {
     if(!ctx?.userData) {
-      ctx?.setRegisterStep(0);
+      action.setRegisterStep(0);
       return true;
     }
-    else if(!ctx?.userData?.country) {
-      ctx?.setRegisterStep(1);
+    else if(!storeState.userData?.country) {
+      action.setRegisterStep(1);
       return true;
     }
   } else {
-    ctx?.setRegisterStep(0);
+    action.setRegisterStep(0);
     return true;
   }
 }

@@ -4,8 +4,11 @@ import { Button } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { collection, doc, updateDoc } from "firebase/firestore";
 import { findUserByUid, parseFirebaseError } from "@/app/etc/firebase";
+import { useStore } from "@/app/context/provider";
 
 export default function Page2(props:pageDataTypes) {
+  const storeAction = useStore((state) => state);
+  const storeState = useStore((state) => state.state);
   const [country, setCountry] = useState('');
   const { setIsLoading, setSuccess, setErrMsg, ctx } = props;
 
@@ -22,16 +25,16 @@ export default function Page2(props:pageDataTypes) {
     if(country) {
         setIsLoading(true);
 
-        const fbDb = ctx?.state?.firebase?.db;
+        const fbDb = storeState.firebase?.db;
         const userDocRef = collection(fbDb, `user_data`);
 
-        const docId = ctx?.userData?.id;
+        const docId = storeState.userData?.id;
         updateDoc(doc(userDocRef, docId), {
           country,
         }).then(() => {
           setIsLoading(false);
           setSuccess(true);
-          ctx?.setState({
+          storeAction.setState({
             registerStep: 2,
             userData: {
               ...ctx?.userData,
