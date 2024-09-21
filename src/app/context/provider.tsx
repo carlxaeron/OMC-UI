@@ -69,20 +69,19 @@ export default function Provider(props: { children: any; data: any; }) {
     }, []);
 
     useEffect(() => {
-        if (state?.userCredential) {
-            const uid = state?.userCredential?.user?.uid;
+        if (storeState.userCredential) {
+            const uid = storeState.userCredential?.user?.uid;
             UserData.findUserByUid(uid).then((userData) => {
                 console.log('userData', userData);
                 if (userData) {
-                    setState2({
-                        ...state,
+                    storeAction.setState({
                         userData,
                     });
                 }
             }).catch((e) => { console.error(e); });
         }
             
-    }, [state?.userCredential]);
+    }, [storeState.userCredential]);
 
     useEffect(() => {
         if(process.env.NODE_ENV !== 'production') console.log('STATE', state);

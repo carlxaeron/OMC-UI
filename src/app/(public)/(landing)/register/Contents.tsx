@@ -146,7 +146,7 @@ export const CheckRegister = (ctx:any, action:any) => {
       action.setRegisterStep(0);
       return true;
     }
-    else if(!storeState.userData?.country) {
+    else if(!ctx.userData?.country) {
       action.setRegisterStep(1);
       return true;
     }

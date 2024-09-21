@@ -37,7 +37,7 @@ export default function Page2(props:pageDataTypes) {
           storeAction.setState({
             registerStep: 2,
             userData: {
-              ...ctx?.userData,
+              ...storeState.userData,
               country,
             }
           });
