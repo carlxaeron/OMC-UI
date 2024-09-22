@@ -1,14 +1,13 @@
 'use client';
 
-import { Context, useStore } from "@/app/context/provider";
+import { useStore } from "@/app/context/provider";
 import { parseFirebaseError } from "@/app/etc/firebase";
 import { Alert, Button } from "@material-tailwind/react";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, use, useContext, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 export default function Contents() {
-  const ctx = useContext(Context);
   const storeState = useStore((state) => state.state);
   const storeAction = useStore((state) => state);
   const router = useRouter();
@@ -65,7 +64,6 @@ export default function Contents() {
 
   return (
     <>
-      { JSON.stringify(storeState) }
       {errMsg && <Alert color="red" className="my-4 md:w-auto w-[90%] mx-auto">{errMsg}</Alert>}
       <div className="md:px-40 flex flex-1 justify-center py-5">
         <form onSubmit={submitForm} className="layout-content-container flex flex-col md:max-w-[512px] py-5 flex-1">

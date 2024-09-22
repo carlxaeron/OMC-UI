@@ -1,15 +1,14 @@
 'use client';
 
-import { Context, useStore } from "@/app/context/provider";
+import { useStore } from "@/app/context/provider";
 import { convertStyleToObject } from "@/app/etc/helper"
 import { useRouter } from "next/navigation"
-import { useContext, useState } from "react";
+import { useState } from "react";
 
 export default function Contents() {
   const storeAction = useStore((state) => state)
   const storeState = useStore((state) => state.state)
   const router = useRouter()
-  const ctx = useContext(Context)
   const [email, setEmail] = useState('')
 
   const handleForm = (e) => {
@@ -23,6 +22,7 @@ export default function Contents() {
   }
 
   const handleInput = (e, type) => {
+    console.log(storeAction.isLoggedIn(), 'isLoggedIn');
     if (type === 'email') {
       setEmail(e.target.value)
     }
@@ -47,7 +47,7 @@ export default function Contents() {
                   Every Seventh Day Adventist is a Missionary
                 </h2>
               </div>
-              { !storeState.userCredential && (
+              { !storeAction.is.loggedIn() && (
                 <label className="flex flex-col min-w-40 h-14 w-full max-w-[480px] @[480px]:h-16">
                   <form onSubmit={handleForm} className="flex w-full flex-1 items-stretch rounded-xl h-full">
                     <div

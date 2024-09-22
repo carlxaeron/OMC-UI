@@ -39,7 +39,6 @@ export const UserData = {
   
     if (!querySnapshot.empty) {
         const userData = querySnapshot.docs[0].data();
-        console.log('query', querySnapshot);
         return {...userData, id: querySnapshot.docs[0].id};
     } else {
         return null;

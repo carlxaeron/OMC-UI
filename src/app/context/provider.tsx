@@ -11,6 +11,7 @@ export const Context = createContext({});
 const defaultState = {
     userCredential: null,
     userData: null,
+    isDoneCheckingLogin: false,
     homeMenuOpen: false,
     landingMenuOpen: false,
     isMobile: false,
@@ -20,14 +21,26 @@ const defaultState = {
     },
     registerStep: 0,
     landingEmail: '',
+    cform: {},
 }
 
-export const useStore = create((set:any) => ({
-    state: defaultState,
-    isLoggedIn: () => set((state:any) => !!state.state?.userCredential),
-    setState: (newState: any) => set((state:any) => ({ state: {...state.state, ...newState} })),
-    setRegisterStep: (step: number) => set((state:any) => ({ state: {...state.state, registerStep: step} })),
-}));
+export const useStore = create(
+    (set:any, get:any) => ({
+        state: defaultState,
+        is: {
+            loggedIn: () => !!get().state.userCredential,
+            withData: () => !!get().state.userData,
+            withCountry: () => !!get().state.userData?.country,
+            withOtherInfo: () => !!get().state.userData?.otherInfo,
+        },
+        logout: () => set(() => ({ state: defaultState })),
+        setState: (newState: any) => set((state:any) => ({ state: {...state.state, ...newState} })),
+        setRegisterStep: (step: number) => set((state:any) => ({ state: {...state.state, registerStep: step} })),
+        toggleHomeMenu: (open?: boolean) => set((state:any) => ({ state: {...state.state, homeMenuOpen: open !== undefined ? open : !state.state.homeMenuOpen} })),
+        toggleLandingMenu: (open?: boolean) => set((state:any) => ({ state: {...state.state, landingMenuOpen: open !== undefined ? open : !state.state.landingMenuOpen} })),
+        setCform: (cform: any) => set((state:any) => ({ state: {...state.state, cform: {...state.state.cform, ...cform}} })),
+    })
+);
 
 export default function Provider(props: { children: any; data: any; }) {
     const [state, setState2] = useState(defaultState);
@@ -56,29 +69,36 @@ export default function Provider(props: { children: any; data: any; }) {
 
         // SIZING
         const handleResize = () => {
-            setState({
+            storeAction.setState({
                 isMobile: window.innerWidth <= 768,
             });
         };
         window.addEventListener("resize", handleResize);
         handleResize();
 
-        return () => {
-            window.removeEventListener("resize", handleResize);
-        };
+        // return () => {
+        //     window.removeEventListener("resize", handleResize);
+        // };
     }, []);
 
     useEffect(() => {
-        if (storeState.userCredential) {
+        if (storeAction.is.loggedIn()) {
             const uid = storeState.userCredential?.user?.uid;
             UserData.findUserByUid(uid).then((userData) => {
-                console.log('userData', userData);
                 if (userData) {
                     storeAction.setState({
                         userData,
                     });
                 }
-            }).catch((e) => { console.error(e); });
+                storeAction.setState({
+                    isDoneCheckingLogin: true,
+                });
+            }).catch((e) => { 
+                storeAction.setState({
+                    isDoneCheckingLogin: true,
+                });
+                console.error(e);
+            });
         }
             
     }, [storeState.userCredential]);

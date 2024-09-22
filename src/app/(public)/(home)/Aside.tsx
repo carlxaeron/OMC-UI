@@ -1,18 +1,32 @@
 import { DefaultIcon } from "@/app/components/FontIcon";
-import { Context } from "@/app/context/provider";
+import { useStore } from "@/app/context/provider";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button } from "@material-tailwind/react";
 import { useRouter } from "next/navigation";
-import { useContext } from "react";
 
 export default function Aside() {
+  const storeState = useStore((state) => state.state);
+  const storeAction = useStore((state) => state);
   const router = useRouter();
-  const ctx = useContext(Context);
+
+  const Li = (props:any) => {
+    return <div {...props} className={`cursor-pointer flex items-center gap-3 px-3 py-2 ${props.containerClass || ''}`}>
+      <div className="text-[#0e141b]" data-icon="Bell" data-size="24px" data-weight="regular">
+        { props.icon ? props.icon : (
+          <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+            <path
+              d="M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z"
+            ></path>
+          </svg>
+        ) }
+      </div>
+      <p className={`text-[#0e141b] text-sm font-medium leading-normal ${props.textClass || ''}`}>{props.title || ''}</p>
+    </div>
+  }
 
   return (
     <>
-      <aside className={`${!ctx?.homeMenuOpen && ctx?.isMobile && 'hidden'} md:visible w-80 p-4 md:relative absolute left-0 bg-white md:h-auto h-full`}>
+      <aside className={`${(!storeState.homeMenuOpen && storeState.isMobile) ? 'hidden' : ''} md:visible w-80 p-4 md:relative absolute left-0 bg-white md:h-auto h-full z-20`}>
         <div className="md:relative sticky top-0 left-0">
           <h1 className="flex flex-row gap-4 items-center mb-3 font-bold px-3 cursor-pointer relative">
             <span onClick={() => router.push('/')}>
@@ -20,7 +34,7 @@ export default function Aside() {
             </span>
             <FontAwesomeIcon onClick={e => {
               e.preventDefault();
-              ctx?.toggleHomeMenu();
+              storeAction.toggleHomeMenu();
             }} className="absolute top-0 right-0 cursor-pointer md:hidden visible" icon={faClose} />
           </h1>
           <div className="flex flex-col gap-2">
@@ -84,6 +98,28 @@ export default function Aside() {
               </div>
               <p className="text-[#0e141b] text-sm font-medium leading-normal">Notifications</p>
             </div>
+            { !storeAction.is.loggedIn() && (<>
+              <Li 
+                containerClass={'bg-blue-700 rounded-lg'} 
+                textClass={'text-white'}
+                onClick={() => router.push('/register')}
+                title="Signup" icon={<div className="opacity-0">hid</div>} />
+              <Li 
+                containerClass={'bg-blue-700 rounded-lg'} 
+                textClass={'text-white'}
+                onClick={() => router.push('/login')}
+                title="Login" icon={<div className="opacity-0">hid</div>} />
+            </>)}
+            { storeAction.is.loggedIn() && (<>
+              <Li 
+                containerClass={'bg-blue-700 rounded-lg'} 
+                textClass={'text-white'}
+                onClick={() => {
+                  storeAction.logout();
+                  router.push('/');
+                }}
+                title="Logout" icon={<div className="opacity-0">hid</div>} />
+            </>)}
           </div>
         </div>
       </aside>

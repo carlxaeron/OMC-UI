@@ -1,21 +1,23 @@
 'use client';
 
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Page1 from "./Page1";
 import ThankYouPage from "./ThankYou";
 import { Alert, Step, Stepper } from "@material-tailwind/react";
-import { Context, ProviderValue, useStore } from "@/app/context/provider";
+import { useStore } from "@/app/context/provider";
 import { ReactNode } from "react";
 import Page2 from "./Page2";
+import Page3 from "./Page3";
 
 export type pageDataTypes = {
   success: boolean,
   setSuccess: any,
-  ctx: ProviderValue,
   isLoading: boolean,
   setIsLoading: any,
   errMsg: string,
   setErrMsg: any,
+  cform: any,
+  setCform: any,
 }
 
 export default function Contents() {
@@ -23,11 +25,10 @@ export default function Contents() {
   const storeAction = useStore((state) => state);
 
   const [success, setSuccess] = useState(false);
-  const ctx = useContext(Context);
   const [isLoading, setIsLoading] = useState(false);
   const [errMsg, setErrMsg] = useState('');
   const [step, setStep] = useState(0);
-  const [cform, setCform] = useState({
+  const defaultFormValues = {
     email: '',
     password: '',
     rpassword: '',
@@ -39,15 +40,18 @@ export default function Contents() {
       "startDate": new Date().toISOString(),
       "endDate": new Date().toISOString()
     },
-    
-  });
+    otherInfo: {
+      // mission: '',
+      // church: '',
+      // membership: '',
+    }
+  };
+  const cform = {...defaultFormValues,  ...storeState.cform};
+  const setCform = (form:any) => storeAction.setCform(form);
 
   useEffect(() => {
-    console.log('cform', cform);
-  }, process.env.NODE_ENV !== 'production' ? [cform] : [])
-
-  useEffect(() => {
-    if(!storeState.userCredential && storeState.landingEmail) {
+    setCform(defaultFormValues);
+    if(!storeAction.is.loggedIn() && storeState.landingEmail) {
       setCform({
         ...cform,
         email: storeState.landingEmail,
@@ -59,8 +63,8 @@ export default function Contents() {
   }, [])
 
   useEffect(() => {
-    if(storeState.userCredential) {
-      if(!ctx?.userData) {
+    if(storeAction.is.loggedIn()) {
+      if(!storeAction.is.withData()) {
         setCform({
           ...cform,
           email: storeState.userCredential?.user?.email || '',
@@ -80,7 +84,7 @@ export default function Contents() {
       }
       setStep(storeState.registerStep);
     }
-  }, [ctx?.userData])
+  }, [storeState.userData])
 
   useEffect(() => {
     if(errMsg) {
@@ -96,7 +100,7 @@ export default function Contents() {
   const pageData = {
     success,
     setSuccess,
-    ctx,
+    ctx: storeState,
     isLoading,
     setIsLoading,
     errMsg,
@@ -112,9 +116,9 @@ export default function Contents() {
           // isLastStep={(value) => setIsLastStep(value)}
           // isFirstStep={(value) => setIsFirstStep(value)}
         >
-          <Step onClick={() => (storeState.userCredential) && !success && storeAction.setRegisterStep(0)}>1</Step>
-          <Step onClick={() => (storeState.userCredential && ctx?.userData) && !success && storeAction.setRegisterStep(1)}>2</Step>
-          <Step onClick={() => (storeState.userCredential && ctx?.userData && storeState.userData?.country) && !success && storeAction.setRegisterStep(2)}>3</Step>
+          <Step onClick={() => (storeAction.is.loggedIn()) && !success && storeAction.setRegisterStep(0)}>1</Step>
+          <Step onClick={() => (storeAction.is.loggedIn() && storeAction.is.withData()) && !success && storeAction.setRegisterStep(1)}>2</Step>
+          <Step onClick={() => (storeAction.is.loggedIn() && storeAction.is.withData() && storeState.userData?.country) && !success && storeAction.setRegisterStep(2)}>3</Step>
         </Stepper>
       </div>
       <div className="py-5">
@@ -125,6 +129,9 @@ export default function Contents() {
         { !success && storeState.registerStep === 1 && (
           <Page2 {...pageData} />
         ) }
+        { !success && storeState.registerStep === 2 && (
+          <Page3 {...pageData} />
+        ) }
         { success && <ThankYouPage /> }
       </div>
     </> 
@@ -132,7 +139,7 @@ export default function Contents() {
 }
 
 export function Container({ children, ...rest }: { children: ReactNode }) {
-  return <div className={`md:px-40 flex flex-1 justify-center py-5 ${rest?.className}`}>
+  return <div className={`md:px-40 flex flex-1 justify-center py-5 ${rest?.className || ''}`}>
     {children}
   </div>
 }
@@ -148,6 +155,10 @@ export const CheckRegister = (ctx:any, action:any) => {
     }
     else if(!ctx.userData?.country) {
       action.setRegisterStep(1);
+      return true;
+    }
+    else if(!ctx.userData?.otherInfo) {
+      action.setRegisterStep(2);
       return true;
     }
   } else {

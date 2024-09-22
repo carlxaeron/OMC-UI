@@ -5,18 +5,18 @@ import { Card, CardBody } from "@material-tailwind/react";
 import { useRouter } from "next/navigation";
 import React, { use, useContext, useState } from "react";
 import { mapping } from "./mapping";
-import { Context, ProviderValue, useStore } from "@/app/context/provider";
+import { useStore } from "@/app/context/provider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { Logo } from "./Header";
 
 export default function MenuComponent(props:any) {
   const storeState = useStore((state) => state.state);
+  const storeAction = useStore((state) => state);
   const isFooter = props.type === 'footer';
   const isAside= props.type === 'aside';
   const isHeader= !props.type;
 
-  const ctx:ProviderValue = useContext(Context);
   const [openMenu, setOpenMenu]:[any, any] = useState({});
   const router = useRouter();
 
@@ -30,10 +30,10 @@ export default function MenuComponent(props:any) {
     return React.createElement(props.tag, rest, children);
   }
 
-  const linkBlank = (item:any, ctx = {}) => {
-    if(item.metadata.loggedIn === false && storeState.userCredential) {
+  const linkBlank = (item:any) => {
+    if(item.metadata.loggedIn === false && storeAction.is.loggedIn()) {
       return true;
-    } else if(item.metadata.loggedIn === true && !storeState.userCredential) {
+    } else if(item.metadata.loggedIn === true && !storeAction.is.loggedIn()) {
       return true;
     }
   }
@@ -57,7 +57,7 @@ export default function MenuComponent(props:any) {
     setOpenMenu({});
   };
 
-  const ReturnHtml = () => (ctx?.isMobile && isHeader) || (!ctx.isMobile && isAside) ? <></> : mapping.map((item, index) => linkBlank(item, ctx) ? <React.Fragment key={index}></React.Fragment> : (
+  const ReturnHtml = () => (storeState.isMobile && isHeader) || (!storeState.isMobile && isAside) ? <></> : mapping.map((item, index) => linkBlank(item) ? <React.Fragment key={index}></React.Fragment> : (
     <Atag key={index} tag={item.children ? 'div' : 'a'} 
       className={`text-[#111418] text-sm font-medium leading-normal flex items-center gap-2 relative p-2 rounded-lg ${!isFooter && item?.metadata?.class || ''}`} 
       href={item.path} 
@@ -69,14 +69,15 @@ export default function MenuComponent(props:any) {
             handleMenuClick(e, item, index);
           }
           if(item.metadata.title === 'Logout') {
-            ctx?.logout();
+            storeAction.logout();
+            router.push('/');
           }
           else {
             router.push(item.path);
           }
 
           if (isAside) {
-            ctx?.toggleLandingMenu(false);
+            storeAction.toggleLandingMenu(false);
         }
       }
     }
@@ -107,20 +108,20 @@ export default function MenuComponent(props:any) {
     </Atag>
   ))
 
-  return ctx?.isMobile && isAside ? <aside className={`${!ctx?.landingMenuOpen && 'hidden'} px-4 absolute left-0 top-0 min-w-[300px] bg-white z-50 h-full`}>
+  return storeState.isMobile && isAside ? <aside className={`${!storeState.landingMenuOpen && 'hidden'} px-4 absolute left-0 top-0 min-w-[300px] bg-white z-50 h-full`}>
     <div className="sticky top-0 left-0">
       <div className="mt-4">
         <Logo />
       </div>
       <FontAwesomeIcon className="top-0 right-0 absolute" icon={faClose} onClick={e => {
         e.preventDefault();
-        ctx?.toggleLandingMenu();
+        storeAction.toggleLandingMenu();
       }} />
       <div className="flex flex-col gap-4 mt-2">
         <ReturnHtml />
       </div>
     </div>
-      { storeState.userCredential && (
+      { storeAction.is.loggedIn() && (
         <h3 className="text-[#111418] text-lg font-bold leading-normal sticky bottom-0 left-0 text-center my-4">Hi {storeState.userData?.first_name} {storeState.userData?.last_name}</h3>
       ) }
   </aside> : <ReturnHtml />;

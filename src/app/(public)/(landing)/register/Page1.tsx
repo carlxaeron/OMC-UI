@@ -10,44 +10,9 @@ import { CheckRegister, Container, pageDataTypes, Title } from "./Contents";
 import { parse } from "path";
 import { findUserByUid, parseFirebaseError } from "@/app/etc/firebase";
 import { useRouter } from "next/navigation";
+import { Form } from "./Form";
 
 export default function Page1(props:pageDataTypes) {
-  // useEffect(() => {
-  //   if(storeState.userCredential) {
-  //     if(!ctx?.userData) {
-  //       setForm({
-  //         ...form,
-  //         email: ctx?.userCredential?.user?.email,
-  //       });
-  //     } else {
-  //       setForm({
-  //         ...form,
-  //         email: storeState.userData?.email,
-  //         first_name: storeState.userData?.first_name,
-  //         last_name: storeState.userData?.last_name,
-  //         gender: storeState.userData?.gender,
-  //       });
-  //     }
-  //   } else {
-  //     if(ctx?.landingEmail) {
-  //       setForm({
-  //         ...form,
-  //         email: ctx?.landingEmail,
-  //       });
-  //       ctx?.setState({
-  //         landingEmail: '',
-  //       });
-  //     }
-  //   }
-
-  //   return () => {
-  //     if(ctx?.landingEmail) ctx?.setState({
-  //       landingEmail: '',
-  //     })
-  //   }
-  // }, []);
-
-  const router = useRouter();
   const storeState = useStore((state) => state.state);
   const storeAction = useStore((state) => state);
   
@@ -72,7 +37,7 @@ export default function Page1(props:pageDataTypes) {
     if (!form.gender) {
       return "Gender is required";
     }
-    if (!storeState.userCredential) {
+    if (!storeAction.is.loggedIn()) {
       if (!dateCheck) {
         return "Date of birth is required";
       }
@@ -98,7 +63,8 @@ export default function Page1(props:pageDataTypes) {
 
   const [isDirty, setIsDirty] = useState(false);
   const dirty = () => {
-    return isDirty || JSON.stringify(form) !== JSON.stringify(defaultValues);
+    return isDirty 
+    // || JSON.stringify(form) !== JSON.stringify(defaultValues);
   }
 
   const handleDateChange = (date) => {
@@ -183,20 +149,20 @@ export default function Page1(props:pageDataTypes) {
     setIsDirty(true);
     if (validate()) return;
     
-    if (!storeState.userCredential) {
+    if (!storeAction.is.loggedIn()) {
       submit.account();
     } else {
       submit.userData(storeState.userCredential?.user?.uid);
     }
   }
 
-  const noUserData = storeState.userCredential && !ctx?.userData;
+  const noUserData = storeAction.is.loggedIn() && !storeAction.is.withData();
 
   return (
     <>
       {(dirty() && validate()) && <Alert color="red" className="my-4 md:w-auto w-[90%] mx-auto">{validate()}</Alert>}
       <Container>
-        <form onSubmit={submitForm} className="layout-content-container flex flex-col md:max-w-[512px] py-5 flex-1">
+        <Form onSubmit={submitForm}>
           <Title>Create Account</Title>
           <div className="flex flex-wrap items-end gap-4 px-4 py-3">
             <label className="flex flex-col min-w-40 flex-1">
@@ -206,7 +172,7 @@ export default function Page1(props:pageDataTypes) {
                 className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
                 defaultValue={form?.first_name}
                 onChange={e => handleInput("first_name", e)}
-                disabled={isLoading || (storeState.userCredential && !noUserData)}
+                disabled={isLoading || (storeAction.is.loggedIn() && !noUserData)}
                 required
               />
             </label>
@@ -219,7 +185,7 @@ export default function Page1(props:pageDataTypes) {
                 className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
                 defaultValue={form?.last_name}
                 onChange={e => handleInput("last_name", e)}
-                disabled={isLoading || (storeState.userCredential && !noUserData)}
+                disabled={isLoading || (storeAction.is.loggedIn() && !noUserData)}
                 required
               />
             </label>
@@ -233,12 +199,12 @@ export default function Page1(props:pageDataTypes) {
                 defaultValue={form?.email}
                 onChange={e => handleInput("email", e)}
                 type="email"
-                disabled={isLoading || storeState.userCredential}
+                disabled={isLoading || storeAction.is.loggedIn()}
                 required
               />
             </label>
           </div>
-          { !storeState.userCredential && (
+          { !storeAction.is.loggedIn() && (
             <>
               <div className="flex flex-wrap items-end gap-4 px-4 py-3">
                 <label className="flex flex-col min-w-40 flex-1">
@@ -280,7 +246,7 @@ export default function Page1(props:pageDataTypes) {
                 className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
                 value=""
               /> */}
-              <Date disabled={isLoading || (storeState.userCredential && !noUserData)} value={form?.date} onChange={handleDateChange} />
+              <Date disabled={isLoading || (storeAction.is.loggedIn() && !noUserData)} value={form?.date} onChange={handleDateChange} />
             </label>
           </div>
           <div className="flex flex-wrap gap-3 p-4 justify-center">
@@ -288,19 +254,19 @@ export default function Page1(props:pageDataTypes) {
               className="text-sm font-medium leading-normal flex items-center justify-center rounded-xl border border-[#dce0e5] px-4 h-11 text-[#111418] has-[:checked]:border-[3px] has-[:checked]:px-3.5 has-[:checked]:border-[#1980e6] relative cursor-pointer"
             >
               Male
-              <input checked={form?.gender === 'm' || false} type="radio" className="invisible absolute" onChange={e => !(isLoading || (storeState.userCredential && !noUserData)) && handleInput("gender", e, 'm')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
+              <input checked={form?.gender === 'm' || false} type="radio" className="invisible absolute" onChange={e => !(isLoading || (storeAction.is.loggedIn() && !noUserData)) && handleInput("gender", e, 'm')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
             </label>
             <label
               className="text-sm font-medium leading-normal flex items-center justify-center rounded-xl border border-[#dce0e5] px-4 h-11 text-[#111418] has-[:checked]:border-[3px] has-[:checked]:px-3.5 has-[:checked]:border-[#1980e6] relative cursor-pointer"
             >
               Female
-              <input checked={form?.gender === 'f' || false} type="radio" className="invisible absolute" onChange={e => !(isLoading || (storeState.userCredential && !noUserData)) && handleInput("gender", e, 'f')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
+              <input checked={form?.gender === 'f' || false} type="radio" className="invisible absolute" onChange={e => !(isLoading || (storeAction.is.loggedIn() && !noUserData)) && handleInput("gender", e, 'f')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
             </label>
             <label
               className="text-sm font-medium leading-normal flex items-center justify-center rounded-xl border border-[#dce0e5] px-4 h-11 text-[#111418] has-[:checked]:border-[3px] has-[:checked]:px-3.5 has-[:checked]:border-[#1980e6] relative cursor-pointer"
             >
               Other
-              <input checked={form?.gender === 'o' || false} type="radio" className="invisible absolute" onChange={e => !(isLoading || (storeState.userCredential && !noUserData)) && handleInput("gender", e, 'o')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
+              <input checked={form?.gender === 'o' || false} type="radio" className="invisible absolute" onChange={e => !(isLoading || (storeAction.is.loggedIn() && !noUserData)) && handleInput("gender", e, 'o')} name="997e7f08-6d32-4223-afbb-17d7399f0e41" />
             </label>
           </div>
           {/* <div className="flex flex-wrap gap-3 p-4 justify-center">
@@ -325,20 +291,20 @@ export default function Page1(props:pageDataTypes) {
             >
               <span className="truncate">Create account</span>
             </button> */}
-            { !storeState.userCredential && (
-              <Button loading={isLoading} type="submit" color="blue" className="w-full" disabled={dirty() && validate()}>Create Account</Button>
+            { !storeAction.is.loggedIn() && (
+              <Button loading={isLoading} type="submit" color="blue" className="w-full" disabled={dirty() && validate()}>Next</Button>
             ) }
             { noUserData && (
               <Button loading={isLoading} type="submit" color="blue" className="w-full" disabled={validate()}>Submit</Button>
             ) }
-            { storeState.userCredential && !noUserData && (
+            { storeAction.is.loggedIn() && !noUserData && (
               <Button onClick={e => {
                 e.preventDefault();
                 storeAction.setRegisterStep(1);
               }} type="button" color="blue" className="w-full">Next</Button>
             ) }
           </div>
-        </form>
+        </Form>
       </Container>
     </> 
   )

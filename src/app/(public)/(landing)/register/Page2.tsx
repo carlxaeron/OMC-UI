@@ -1,9 +1,11 @@
+'use client';
+
 import { convertStyleToObject } from "@/app/etc/helper";
-import { CheckRegister, Container, pageDataTypes, Title } from "./Contents";
+import { Container, pageDataTypes, Title } from "./Contents";
 import { Button } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { collection, doc, updateDoc } from "firebase/firestore";
-import { findUserByUid, parseFirebaseError } from "@/app/etc/firebase";
+import { parseFirebaseError } from "@/app/etc/firebase";
 import { useStore } from "@/app/context/provider";
 
 export default function Page2(props:pageDataTypes) {
@@ -23,47 +25,31 @@ export default function Page2(props:pageDataTypes) {
   const submitCountry = (e:any) => {
     e.preventDefault();
     if(country) {
-        setIsLoading(true);
+      setIsLoading(true);
 
-        const fbDb = storeState.firebase?.db;
-        const userDocRef = collection(fbDb, `user_data`);
+      const fbDb = storeState.firebase?.db;
+      const userDocRef = collection(fbDb, `user_data`);
 
-        const docId = storeState.userData?.id;
-        updateDoc(doc(userDocRef, docId), {
-          country,
-        }).then(() => {
-          setIsLoading(false);
-          setSuccess(true);
-          storeAction.setState({
-            registerStep: 2,
-            userData: {
-              ...storeState.userData,
-              country,
-            }
-          });
-        }).catch((error2:any) => {
-          window.scrollTo(0, 0);
-          setErrMsg(parseFirebaseError(error2));
-          setTimeout(() => {
-            setErrMsg('');
-          }, 5000);
-          setIsLoading(false);
+      const docId = storeState.userData?.id;
+      updateDoc(doc(userDocRef, docId), {
+        country,
+      }).then(() => {
+        setIsLoading(false);
+        storeAction.setState({
+          registerStep: 2,
+          userData: {
+            ...storeState.userData,
+            country,
+          }
         });
-        // console.log('docId', docId);
-        // doc(userDocRef, docId).then((userDoc) => {
-        //   console.log('userDoc', userDoc);
-        // });
-  
-        // updateDoc(userDoc, {
-        //   country,
-        // }).catch((error2:any) => {
-        //   window.scrollTo(0, 0);
-        //   setErrMsg(parseFirebaseError(error2));
-        //   setTimeout(() => {
-        //     setErrMsg('');
-        //   }, 5000);
-        //   setIsLoading(false);
-        // });
+      }).catch((error2:any) => {
+        window.scrollTo(0, 0);
+        setErrMsg(parseFirebaseError(error2));
+        setTimeout(() => {
+          setErrMsg('');
+        }, 5000);
+        setIsLoading(false);
+      });
     }
   }
 

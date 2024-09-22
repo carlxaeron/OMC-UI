@@ -3,7 +3,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DefaultIcon } from "@/app/components/FontIcon";
-import { Context, ProviderValue, useStore } from "@/app/context/provider";
+import { useStore } from "@/app/context/provider";
 import MenuComponent from "./MenuComponent"; // Import the Menu component correctly
 import { Button } from "react-day-picker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -24,8 +24,7 @@ export function Logo() {
 
 export default function Header() {
   const storeState = useStore((state) => state.state);
-  const router = useRouter();
-  const ctx:ProviderValue = useContext(Context);
+  const storeAction = useStore((state) => state);
 
   return (
     <header className="flex md:flex-row flex-col md:relative sticky top-0 left-0 bg-white z-50 items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f4] px-4 py-3">
@@ -33,7 +32,7 @@ export default function Header() {
         <Button className="absolute top-0 left-4 bottom-0 cursor-pointer md:hidden"
           onClick={e => {
             e.preventDefault();
-            ctx?.toggleLandingMenu();
+            storeAction.toggleLandingMenu();
           }}
         >
           <FontAwesomeIcon icon={faBars} />
@@ -43,7 +42,7 @@ export default function Header() {
       <div className="flex flex-1 justify-end gap-8">
         <div className="flex items-center gap-4">
           <MenuComponent /> {/* Use the Menu component correctly */}
-          { storeState.userCredential && (
+          { storeAction.is.loggedIn() && (
             <h3 className="text-[#111418] text-lg font-bold leading-normal md:block hidden">Hi {storeState.userData?.first_name} {storeState.userData?.last_name}</h3>
           ) }
         </div>

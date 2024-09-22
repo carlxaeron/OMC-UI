@@ -13,14 +13,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    if(storeState.userCredential) {
+    if(storeAction.is.loggedIn() && storeState.isDoneCheckingLogin) {
       if(CheckRegister(storeState, storeAction)) {
         if(pathname !== "/register/") {
           router.push("/register");
         }
       }
     }
-  }, [pathname])
+  }, [pathname, storeState.isDoneCheckingLogin]);
 
   return <>
     { children }

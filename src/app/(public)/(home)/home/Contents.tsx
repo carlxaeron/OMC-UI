@@ -1,9 +1,16 @@
 'use client';
 
-import { Button } from "@material-tailwind/react";
+import { Button as ButtonComponent } from "@material-tailwind/react";
 import { convertStyleToObject } from "../../../etc/helper";
 
 export default function Contents() {
+  const Button = (props:any) => {
+    const c = <>{props.children || ''}</>
+    return (
+      <ButtonComponent className="min-w-[35%]">{c}</ButtonComponent>
+    )
+  }
+
   return (
     <>
       <div className="flex flex-wrap justify-between gap-3 p-4"><p className="text-[#0e141b] tracking-light text-[32px] font-bold leading-tight min-w-72">Home</p></div>
